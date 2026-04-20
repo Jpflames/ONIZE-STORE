@@ -1,0 +1,72 @@
+"use server";
+
+import { backendClient } from "@/sanity/lib/backendClient";
+import { CartItem } from "@/store";
+
+interface PendingOrderPayload {
+  orderNumber: string;
+  customerName: string;
+  customerEmail: string;
+  clerkUserId: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  state?: string;
+  postalCode?: string;
+  country: string;
+  items: { product: CartItem["product"]; quantity: number }[];
+}
+
+export async function createPendingOrder(payload: PendingOrderPayload) {
+  const {
+    orderNumber,
+    customerName,
+    customerEmail,
+    clerkUserId,
+    items,
+    line1,
+    line2,
+    city,
+    state,
+    postalCode,
+    country,
+  } = payload;
+
+  const sanityProducts = items.map((item) => ({
+    _key: crypto.randomUUID(),
+    product: {
+      _type: "reference",
+      _ref: item.product._id,
+    },
+    quantity: item.quantity,
+  }));
+
+  const totalPrice = items.reduce(
+    (sum, item) => sum + (item.product.price ?? 0) * item.quantity,
+    0,
+  );
+
+  await backendClient.create({
+    _type: "order",
+    orderNumber,
+    customerName,
+    email: customerEmail,
+    clerkUserId,
+    line1,
+    line2,
+    city,
+    state,
+    postalCode,
+    country,
+    stripeCustomerId: customerEmail,
+    stripeCheckoutSessionId: "",
+    stripePaymentIntentId: "",
+    currency: "ngn",
+    amountDiscount: 0,
+    products: sanityProducts,
+    totalPrice,
+    status: "pending",
+    paymentStatus: "pending",
+    orderDate: new Date().toISOString(),
+  });
+}

@@ -1,0 +1,126 @@
+import Container from "@/components/Container";
+import type { Metadata } from "next";
+import {
+  FileText,
+  ShieldAlert,
+  Scale,
+  Globe,
+  Ban,
+  RefreshCcw,
+} from "lucide-react";
+import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Terms & Conditions | ONIZE",
+  description: "Read the Terms and Conditions governing your use of ONIZE.",
+};
+
+const sections = [
+  {
+    icon: FileText,
+    number: "01",
+    title: "Acceptance of Terms",
+    body: "By accessing or using ONIZE's website, mobile app, or any of our services, you agree to be bound by these Terms and Conditions in full. If you do not agree with any part, please discontinue use immediately. We may update these terms at any time — continued use after changes constitutes acceptance.",
+  },
+  {
+    icon: ShieldAlert,
+    number: "02",
+    title: "Use of Services",
+    body: "You agree to use ONIZE's services solely for lawful purposes. You must not use our platform to engage in any fraudulent activity, transmit harmful content, attempt unauthorised access, or violate any applicable law or regulation. Violations may result in immediate account termination.",
+  },
+  {
+    icon: Scale,
+    number: "03",
+    title: "Intellectual Property",
+    body: "All content, branding, graphics, logos, text, and software on ONIZE are the exclusive property of ONIZE or its licensors and are protected by copyright, trademark, and other intellectual property laws. You may not reproduce, distribute, or create derivative works without prior written consent.",
+  },
+  {
+    icon: Ban,
+    number: "04",
+    title: "Limitation of Liability",
+    body: "To the maximum extent permitted by law, ONIZE shall not be liable for any indirect, incidental, special, consequential, or punitive damages — including loss of profits, data, or goodwill — arising from your use of, or inability to use, our services, even if we have been advised of the possibility of such damages.",
+  },
+  {
+    icon: RefreshCcw,
+    number: "05",
+    title: "Returns & Refunds",
+    body: "Products may be returned within 30 days of delivery in their original condition. Refunds are processed within 5–7 business days after we receive and inspect the returned item. Digital products and items marked as non-returnable are excluded from this policy.",
+  },
+  {
+    icon: Globe,
+    number: "06",
+    title: "Governing Law",
+    body: "These Terms and Conditions shall be governed by and interpreted in accordance with the laws of the jurisdiction in which ONIZE operates. Any disputes arising out of or in connection with these terms shall be subject to the exclusive jurisdiction of those courts.",
+  },
+];
+
+export default function TermsPage() {
+  return (
+    <div>
+      {/* Hero */}
+      <section className="border-b border-border bg-card">
+        <div className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
+          <Container className="py-16 md:py-20 relative">
+            <p className="text-xs font-bold uppercase tracking-widest text-primary mb-3">
+              Legal
+            </p>
+            <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4">
+              Terms &amp; Conditions
+            </h1>
+            <p className="text-muted-foreground max-w-2xl leading-relaxed">
+              These terms govern your use of the ONIZE platform. Please read
+              them carefully before using our services. Last updated:{" "}
+              <span className="font-semibold text-foreground">
+                February 2025
+              </span>
+              .
+            </p>
+          </Container>
+        </div>
+      </section>
+
+      {/* Sections */}
+      <Container className="py-16 md:py-20">
+        <div className="max-w-3xl mx-auto space-y-6">
+          {sections.map((s) => {
+            const Icon = s.icon;
+            return (
+              <div
+                key={s.number}
+                className="group bg-card border border-border rounded-2xl p-7 hover:border-primary/30 transition-all"
+              >
+                <div className="flex items-start gap-5">
+                  <div className="shrink-0 w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors mt-0.5">
+                    <Icon className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">
+                      Section {s.number}
+                    </p>
+                    <h2 className="text-lg font-bold mb-2">{s.title}</h2>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {s.body}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Footer note */}
+        <div className="max-w-3xl mx-auto mt-10 p-5 rounded-2xl border border-border bg-muted/30 text-sm text-muted-foreground text-center">
+          Questions about our terms?{" "}
+          <Link
+            href="/contact"
+            className="text-primary font-semibold hover:underline"
+          >
+            Contact our support team
+          </Link>{" "}
+          — we&apos;re happy to clarify anything.
+        </div>
+      </Container>
+    </div>
+  );
+}
