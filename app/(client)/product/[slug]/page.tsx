@@ -126,10 +126,10 @@ const ProductPage = async ({
           <div className="flex flex-wrap items-center gap-5">
             <div className="border border-primary/20 text-center p-3 hover:border-primary hoverEffect rounded-md">
               <p className="text-base font-semibold text-foreground">
-                Free Shipping
+                Shipping
               </p>
               <p className="text-sm text-muted-foreground">
-                Free shipping over order $150
+                $20 within Nigeria · $40 international
               </p>
             </div>
             <div className="border border-primary/20 text-center p-3 hover:border-primary hoverEffect rounded-md">

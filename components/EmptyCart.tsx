@@ -41,7 +41,7 @@ export default function EmptyCart() {
 
         {/* Subtle divider hint */}
         <p className="mt-6 text-xs text-muted-foreground/60">
-          Free shipping on orders over $150
+          Shipping is calculated at checkout
         </p>
       </motion.div>
     </div>

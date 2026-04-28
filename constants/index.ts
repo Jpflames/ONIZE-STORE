@@ -18,6 +18,7 @@ export const productType = [
 export const quickLinksData = [
   { title: "About us", href: "/about" },
   { title: "Contact us", href: "/contact" },
+  { title: "Shipping Policy", href: "/shipping-policy" },
   { title: "Terms & Conditions", href: "/terms" },
   { title: "Privacy Policy", href: "/privacy" },
   { title: "FAQs", href: "/faqs" },

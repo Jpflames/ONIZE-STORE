@@ -29,9 +29,14 @@ import useLoginSidebar from "@/hooks/useLoginSidebar";
 import AddressSelection from "@/components/new/AddressSelection";
 import { closePaymentModal, useFlutterwave } from "flutterwave-react-v3";
 
-const SHIPPING_FREE_THRESHOLD = 150;
-const SHIPPING_FEE = 10;
+const SHIPPING_FEE_NIGERIA = 20;
+const SHIPPING_FEE_INTERNATIONAL = 40;
 const FLUTTERWAVE_PAYMENT_EMAIL = "onizecrochetspayment2@gmail.com";
+
+function isNigeria(country?: string) {
+  const c = (country ?? "").trim().toLowerCase();
+  return c === "nigeria" || c === "ng";
+}
 
 export default function CartClient({
   initialAddress,
@@ -70,7 +75,11 @@ export default function CartClient({
   } | null>(null);
   const handleFlutterPayment = useFlutterwave(flutterwaveConfig ?? ({} as never));
   const subtotal = getTotalPrice();
-  const shippingCost = subtotal > SHIPPING_FREE_THRESHOLD ? 0 : SHIPPING_FEE;
+  const shippingCost = selectedAddress
+    ? isNigeria(selectedAddress.country)
+      ? SHIPPING_FEE_NIGERIA
+      : SHIPPING_FEE_INTERNATIONAL
+    : 0;
   const orderTotal = subtotal + shippingCost;
 
   useEffect(() => {
@@ -430,13 +439,7 @@ export default function CartClient({
                         <span className="text-muted-foreground font-medium">
                           Shipping
                         </span>
-                        {shippingCost === 0 ? (
-                          <span className="text-green-600 font-bold uppercase text-xs tracking-widest">
-                            Free
-                          </span>
-                        ) : (
-                          <PriceFormatter amount={shippingCost} className="font-bold" />
-                        )}
+                        <PriceFormatter amount={shippingCost} className="font-bold" />
                       </div>
                     </div>
 
