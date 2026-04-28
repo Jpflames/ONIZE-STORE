@@ -14,7 +14,9 @@ const ProductGrid = () => {
   const [loading, setLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState(productType[0]?.title || "");
   const query = `*[_type == "product" && variant == $variant] | order(name asc)`;
-  const params = { variant: selectedTab.toLowerCase() };
+  const selectedVariant =
+    productType.find((item) => item.title === selectedTab)?.value || "";
+  const params = { variant: selectedVariant };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,7 +31,7 @@ const ProductGrid = () => {
       }
     };
     fetchData();
-  }, [selectedTab]);
+  }, [selectedTab, selectedVariant]);
 
   return (
     <div className="mt-10 flex flex-col items-center">

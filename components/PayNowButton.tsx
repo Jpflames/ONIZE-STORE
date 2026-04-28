@@ -9,6 +9,8 @@ import {
 import toast from "react-hot-toast";
 import { closePaymentModal, useFlutterwave } from "flutterwave-react-v3";
 
+const FLUTTERWAVE_PAYMENT_EMAIL = "onizecrochetspayment2@gmail.com";
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function PayNowButton({ order }: { order: any }) {
   const [isPending, setIsPending] = useState(false);
@@ -28,7 +30,7 @@ export default function PayNowButton({ order }: { order: any }) {
           currency: "USD",
           payment_options: "card,banktransfer,ussd",
           customer: {
-            email: checkoutContext.email,
+            email: FLUTTERWAVE_PAYMENT_EMAIL,
             name: checkoutContext.customerName,
           },
           customizations: {

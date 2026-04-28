@@ -6,6 +6,7 @@ import { CartItem } from "@/store";
 interface PendingOrderPayload {
   orderNumber: string;
   txRef: string;
+  shippingAmount: number;
   customerName: string;
   customerEmail: string;
   clerkUserId: string;
@@ -22,6 +23,7 @@ export async function createPendingOrder(payload: PendingOrderPayload) {
   const {
     orderNumber,
     txRef,
+    shippingAmount,
     customerName,
     customerEmail,
     clerkUserId,
@@ -43,10 +45,11 @@ export async function createPendingOrder(payload: PendingOrderPayload) {
     quantity: item.quantity,
   }));
 
-  const totalPrice = items.reduce(
+  const subtotal = items.reduce(
     (sum, item) => sum + (item.product.price ?? 0) * item.quantity,
     0,
   );
+  const totalPrice = subtotal + shippingAmount;
 
   await backendClient.create({
     _type: "order",

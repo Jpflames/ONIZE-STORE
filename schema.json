@@ -1262,27 +1262,20 @@
           "of": [
             {
               "type": "string",
-              "value": "tshirt"
+              "value": "blossom-aura-bag"
             },
             {
               "type": "string",
-              "value": "jacket"
+              "value": "velora-royale-bag"
             },
             {
               "type": "string",
-              "value": "pants"
+              "value": "muse-everyday-tote"
             },
             {
               "type": "string",
-              "value": "hoodie"
+              "value": "lunar-elite-crescent-bag"
             },
-            {
-              "type": "string",
-              "value": "short"
-            },
-            {
-              "type": "string",
-              "value": "others"
             }
           ]
         },

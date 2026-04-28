@@ -29,6 +29,10 @@ import useLoginSidebar from "@/hooks/useLoginSidebar";
 import AddressSelection from "@/components/new/AddressSelection";
 import { closePaymentModal, useFlutterwave } from "flutterwave-react-v3";
 
+const SHIPPING_FREE_THRESHOLD = 150;
+const SHIPPING_FEE = 10;
+const FLUTTERWAVE_PAYMENT_EMAIL = "onizecrochetspayment2@gmail.com";
+
 export default function CartClient({
   initialAddress,
 }: {
@@ -65,6 +69,9 @@ export default function CartClient({
     txRef: string;
   } | null>(null);
   const handleFlutterPayment = useFlutterwave(flutterwaveConfig ?? ({} as never));
+  const subtotal = getTotalPrice();
+  const shippingCost = subtotal > SHIPPING_FREE_THRESHOLD ? 0 : SHIPPING_FEE;
+  const orderTotal = subtotal + shippingCost;
 
   useEffect(() => {
     setIsClient(true);
@@ -152,6 +159,7 @@ export default function CartClient({
       await createPendingOrder({
         orderNumber,
         txRef,
+        shippingAmount: shippingCost,
         customerName: selectedAddress.fullName,
         customerEmail,
         clerkUserId: user!.id,
@@ -167,11 +175,11 @@ export default function CartClient({
       setFlutterwaveConfig({
         public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY || "",
         tx_ref: txRef,
-        amount: Number(getTotalPrice().toFixed(2)),
+        amount: Number(orderTotal.toFixed(2)),
         currency: "USD",
         payment_options: "card,banktransfer,ussd",
         customer: {
-          email: customerEmail,
+          email: FLUTTERWAVE_PAYMENT_EMAIL,
           name: selectedAddress.fullName,
         },
         customizations: {
@@ -422,9 +430,13 @@ export default function CartClient({
                         <span className="text-muted-foreground font-medium">
                           Shipping
                         </span>
-                        <span className="text-green-600 font-bold uppercase text-xs tracking-widest">
-                          Free
-                        </span>
+                        {shippingCost === 0 ? (
+                          <span className="text-green-600 font-bold uppercase text-xs tracking-widest">
+                            Free
+                          </span>
+                        ) : (
+                          <PriceFormatter amount={shippingCost} className="font-bold" />
+                        )}
                       </div>
                     </div>
 
@@ -443,7 +455,7 @@ export default function CartClient({
                       <div className="flex justify-between items-center">
                         <span className="text-lg font-bold">Total</span>
                         <PriceFormatter
-                          amount={getTotalPrice()}
+                          amount={orderTotal}
                           className="text-2xl font-black text-primary"
                         />
                       </div>
@@ -513,7 +525,7 @@ export default function CartClient({
                         Grand Total
                       </span>
                       <PriceFormatter
-                        amount={getTotalPrice()}
+                        amount={orderTotal}
                         className="text-2xl font-black text-primary"
                       />
                     </div>

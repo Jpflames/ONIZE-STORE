@@ -9,11 +9,10 @@ export const headerData = [
 ];
 
 export const productType = [
-  { title: "Tshirt", value: "tshirt" },
-  { title: "Jacket", value: "jacket" },
-  { title: "Pants", value: "pants" },
-  { title: "Hoodie", value: "hoodie" },
-  { title: "Short", value: "tshirt" },
+  { title: "Blossom Aura Bag", value: "blossom-aura-bag" },
+  { title: "Velora Royale Bag", value: "velora-royale-bag" },
+  { title: "Muse Everyday Tote", value: "muse-everyday-tote" },
+  { title: "Lunar Elite Crescent Bag", value: "lunar-elite-crescent-bag" },
 ];
 
 export const quickLinksData = [
@@ -27,7 +26,7 @@ export const categoriesData = [
   { title: "Men's Fashion", href: "/men-s-fashion" },
   { title: "Women's Fashion", href: "/women" },
   { title: "Kids corner", href: "/kids" },
-  { title: "Tshirt", href: "/t-shirt" },
+  { title: "Bags", href: "/bags" },
   { title: "Accessories", href: "/accessories" },
   { title: "Household", href: "/household" },
   { title: "Others", href: "/others" },

@@ -212,7 +212,11 @@ export type Product = {
   productBase?: Array<string>;
   stock?: number;
   status?: "new" | "hot" | "sale";
-  variant?: "tshirt" | "jacket" | "pants" | "hoodie" | "short" | "others";
+  variant?:
+    | "blossom-aura-bag"
+    | "velora-royale-bag"
+    | "muse-everyday-tote"
+    | "lunar-elite-crescent-bag";
 };
 
 export type Slug = {
@@ -437,7 +441,11 @@ export type QueryResult = Array<{
       productBase?: Array<string>;
       stock?: number;
       status?: "hot" | "new" | "sale";
-      variant?: "hoodie" | "jacket" | "others" | "pants" | "short" | "tshirt";
+      variant?:
+        | "blossom-aura-bag"
+        | "velora-royale-bag"
+        | "muse-everyday-tote"
+        | "lunar-elite-crescent-bag";
     } | null;
     quantity?: number;
     _key: string;
@@ -487,7 +495,11 @@ export type PRODUCTS_QUERY_RESULT = Array<{
   productBase?: Array<string>;
   stock?: number;
   status?: "hot" | "new" | "sale";
-  variant?: "hoodie" | "jacket" | "others" | "pants" | "short" | "tshirt";
+  variant?:
+    | "blossom-aura-bag"
+    | "velora-royale-bag"
+    | "muse-everyday-tote"
+    | "lunar-elite-crescent-bag";
 }>;
 
 // Source: sanity/helpers/index.ts
@@ -542,7 +554,11 @@ export type PRODUCT_SEARCH_QUERY_RESULT = Array<{
   productBase?: Array<string>;
   stock?: number;
   status?: "hot" | "new" | "sale";
-  variant?: "hoodie" | "jacket" | "others" | "pants" | "short" | "tshirt";
+  variant?:
+    | "blossom-aura-bag"
+    | "velora-royale-bag"
+    | "muse-everyday-tote"
+    | "lunar-elite-crescent-bag";
 }>;
 
 // Source: sanity/helpers/index.ts
@@ -576,7 +592,11 @@ export type PRODUCT_BY_ID_QUERY_RESULT = {
   productBase?: Array<string>;
   stock?: number;
   status?: "hot" | "new" | "sale";
-  variant?: "hoodie" | "jacket" | "others" | "pants" | "short" | "tshirt";
+  variant?:
+    | "blossom-aura-bag"
+    | "velora-royale-bag"
+    | "muse-everyday-tote"
+    | "lunar-elite-crescent-bag";
 } | null;
 
 // Source: sanity/helpers/index.ts
@@ -610,7 +630,11 @@ export type PRODUCT_BY_CATEGORY_QUERY_RESULT = Array<{
   productBase?: Array<string>;
   stock?: number;
   status?: "hot" | "new" | "sale";
-  variant?: "hoodie" | "jacket" | "others" | "pants" | "short" | "tshirt";
+  variant?:
+    | "blossom-aura-bag"
+    | "velora-royale-bag"
+    | "muse-everyday-tote"
+    | "lunar-elite-crescent-bag";
 }>;
 
 // Source: sanity/helpers/index.ts
@@ -700,7 +724,11 @@ export type MY_ORDERS_QUERY_RESULT = Array<{
       productBase?: Array<string>;
       stock?: number;
       status?: "hot" | "new" | "sale";
-      variant?: "hoodie" | "jacket" | "others" | "pants" | "short" | "tshirt";
+      variant?:
+        | "blossom-aura-bag"
+        | "velora-royale-bag"
+        | "muse-everyday-tote"
+        | "lunar-elite-crescent-bag";
     } | null;
     quantity?: number;
     _key: string;
