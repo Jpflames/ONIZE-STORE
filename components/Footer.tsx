@@ -17,8 +17,8 @@ const Footer = () => {
           <div className="space-y-4">
             <Logo>ONIZE</Logo>
             <p className="text-muted-foreground text-sm">
-              Discover curated furniture collections at ONIZE, blending style
-              and comfort to elevate your living spaces.
+              Discover best crochets bag collections at ONIZE STORE, blending style
+              and comfort to elevate your fashion style.
             </p>
             <SocialMedia
               className="text-primary/60"

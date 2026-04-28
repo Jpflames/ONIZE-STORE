@@ -16,7 +16,7 @@ const Loading = () => {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="text-4xl font-black tracking-tight text-foreground"
         >
-          Tu<span className="text-primary">los</span>
+          On<span className="text-primary">ize</span>
         </motion.div>
 
         {/* Animated ring stack */}
