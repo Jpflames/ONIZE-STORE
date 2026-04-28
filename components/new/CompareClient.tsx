@@ -238,9 +238,9 @@ function ProductSearch({
                 <div className="min-w-0">
                   <p className="text-sm font-semibold line-clamp-1">{p.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {(p.price ?? 0).toLocaleString("en-NG", {
+                    {(p.price ?? 0).toLocaleString("en-US", {
                       style: "currency",
-                      currency: "NGN",
+                      currency: "USD",
                       minimumFractionDigits: 2,
                     })}
                   </p>
