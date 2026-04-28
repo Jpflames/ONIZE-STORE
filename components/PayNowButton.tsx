@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { CreditCard } from "lucide-react";
 import {
@@ -7,14 +7,89 @@ import {
   Metadata,
 } from "@/actions/createCheckoutSession";
 import toast from "react-hot-toast";
+import { closePaymentModal, useFlutterwave } from "flutterwave-react-v3";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function PayNowButton({ order }: { order: any }) {
   const [isPending, setIsPending] = useState(false);
+  const [checkoutContext, setCheckoutContext] = useState<{
+    orderNumber: string;
+    txRef: string;
+    email: string;
+    customerName: string;
+    amount: number;
+  } | null>(null);
+  const handleFlutterPayment = useFlutterwave(
+    checkoutContext
+      ? {
+          public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY || "",
+          tx_ref: checkoutContext.txRef,
+          amount: checkoutContext.amount,
+          currency: "USD",
+          payment_options: "card,banktransfer,ussd",
+          customer: {
+            email: checkoutContext.email,
+            name: checkoutContext.customerName,
+          },
+          customizations: {
+            title: "ONIZE Checkout",
+            description: `Order ${checkoutContext.orderNumber}`,
+          },
+        }
+      : ({} as never),
+  );
+
+  useEffect(() => {
+    if (!checkoutContext) return;
+
+    handleFlutterPayment({
+      callback: async (response) => {
+        try {
+          if (!response.transaction_id) {
+            toast.error("Payment was cancelled");
+            return;
+          }
+
+          const verifyRes = await fetch("/api/verify-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              transaction_id: response.transaction_id,
+              tx_ref: checkoutContext.txRef,
+              orderNumber: checkoutContext.orderNumber,
+            }),
+          });
+
+          if (!verifyRes.ok) {
+            toast.error("Payment verification failed");
+            return;
+          }
+
+          toast.success("Payment successful");
+          window.location.href = `/success?orderNumber=${checkoutContext.orderNumber}`;
+        } catch {
+          toast.error("Unable to verify payment");
+        } finally {
+          closePaymentModal();
+          setCheckoutContext(null);
+          setIsPending(false);
+        }
+      },
+      onClose: () => {
+        setCheckoutContext(null);
+        setIsPending(false);
+      },
+    });
+  }, [checkoutContext, handleFlutterPayment]);
 
   const handlePayNow = async () => {
     try {
       setIsPending(true);
+      if (!process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY) {
+        toast.error("Payment gateway is not configured.");
+        setIsPending(false);
+        return;
+      }
 
       if (!order.products || order.products.length === 0) {
         toast.error("No products in this order to pay for.");
@@ -36,18 +111,16 @@ export default function PayNowButton({ order }: { order: any }) {
         clerkUserId: order.clerkUserId || "",
       };
 
-      const checkoutUrl = await createCheckoutSession(items, metadata);
-
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
-      } else {
-        toast.error("Failed to generate checkout session");
-      }
-    } catch (error) {
-      console.error("Error creating checkout session:", error);
+      const txRef = await createCheckoutSession(items, metadata);
+      setCheckoutContext({
+        orderNumber: order.orderNumber,
+        txRef,
+        email: metadata.customerEmail,
+        customerName: metadata.customerName,
+        amount: Number(order.totalPrice ?? 0),
+      });
+    } catch {
       toast.error("Error initializing checkout. Please try again.");
-    } finally {
-      setIsPending(false);
     }
   };
 

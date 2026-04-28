@@ -36,7 +36,7 @@ export const faqsData = [
   {
     question: "How do I place an order on ONIZE?",
     answer:
-      "Browsing and buying is simple — find a product you love, click 'Add to Cart', review your cart, and proceed to checkout. You'll need to sign in and have a saved delivery address to complete your purchase. Payment is processed securely via Stripe.",
+      "Browsing and buying is simple — find a product you love, click 'Add to Cart', review your cart, and proceed to checkout. You'll need to sign in and have a saved delivery address to complete your purchase. Payment is processed securely via Flutterwave.",
   },
   {
     question: "How long does delivery take?",
@@ -51,7 +51,7 @@ export const faqsData = [
   {
     question: "Which payment methods do you accept?",
     answer:
-      "We accept all major credit and debit cards (Visa, Mastercard, Amex), Apple Pay, and Google Pay — all processed securely through Stripe. You can save your payment details for faster checkout in the future.",
+      "We accept major credit and debit cards plus other supported payment options, all processed securely through Flutterwave.",
   },
   {
     question: "How do I track my order?",
@@ -66,7 +66,7 @@ export const faqsData = [
   {
     question: "Is my personal and payment information secure?",
     answer:
-      "Absolutely. All data is encrypted in transit using TLS, and we never store your full card details — that's handled entirely by Stripe, a PCI-DSS Level 1 certified payment processor. Your information is never sold to third parties.",
+      "Absolutely. All data is encrypted in transit using TLS, and we never store your full card details — payment processing is handled securely by Flutterwave. Your information is never sold to third parties.",
   },
   {
     question: "Do you offer discounts or promotional codes?",

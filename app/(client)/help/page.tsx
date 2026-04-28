@@ -37,13 +37,13 @@ const HelpPage = () => {
     {
       question: "Which payment methods do you accept?",
       answer:
-        "We accept all major credit cards (Visa, Mastercard, American Express), PayPal, and Google Pay. All transactions are securely processed through Stripe.",
+        "We accept major cards and other supported payment methods. All transactions are securely processed through Flutterwave.",
       icon: <Landmark className="w-5 h-5 text-primary" />,
     },
     {
       question: "Is my personal data secure?",
       answer:
-        "Yes, we take security very seriously. We use industry-standard encryption to protect your data and do not store any credit card information on our servers. All payments are handled by Stripe, a leading secure payment processor.",
+        "Yes, we take security very seriously. We use industry-standard encryption to protect your data and do not store any credit card information on our servers. All payments are handled by Flutterwave.",
       icon: <ShieldCheck className="w-5 h-5 text-primary" />,
     },
   ];

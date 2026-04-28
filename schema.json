@@ -820,14 +820,14 @@
         },
         "optional": true
       },
-      "stripeCheckoutSessionId": {
+      "flutterwaveTxRef": {
         "type": "objectAttribute",
         "value": {
           "type": "string"
         },
         "optional": true
       },
-      "stripeCustomerId": {
+      "flutterwaveCustomerEmail": {
         "type": "objectAttribute",
         "value": {
           "type": "string"
@@ -855,7 +855,7 @@
         },
         "optional": true
       },
-      "stripePaymentIntentId": {
+      "flutterwaveTransactionId": {
         "type": "objectAttribute",
         "value": {
           "type": "string"

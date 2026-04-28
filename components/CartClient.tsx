@@ -13,10 +13,6 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import EmptyCart from "@/components/EmptyCart";
-import {
-  createCheckoutSession,
-  Metadata,
-} from "@/actions/createCheckoutSession";
 import { createPendingOrder } from "@/actions/createPendingOrder";
 import paypalLogo from "@/images/paypalLogo.png";
 import {
@@ -31,6 +27,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { useRouter } from "next/navigation";
 import useLoginSidebar from "@/hooks/useLoginSidebar";
 import AddressSelection from "@/components/new/AddressSelection";
+import { closePaymentModal, useFlutterwave } from "flutterwave-react-v3";
 
 export default function CartClient({
   initialAddress,
@@ -54,10 +51,69 @@ export default function CartClient({
   const router = useRouter();
   const { open: openLoginSidebar } = useLoginSidebar();
   const [selectedAddress, setSelectedAddress] = useState<any>(null);
+  const [flutterwaveConfig, setFlutterwaveConfig] = useState<{
+    public_key: string;
+    tx_ref: string;
+    amount: number;
+    currency: string;
+    payment_options: string;
+    customer: { email: string; name: string };
+    customizations: { title: string; description: string };
+  } | null>(null);
+  const [paymentOrderContext, setPaymentOrderContext] = useState<{
+    orderNumber: string;
+    txRef: string;
+  } | null>(null);
+  const handleFlutterPayment = useFlutterwave(flutterwaveConfig ?? ({} as never));
 
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  useEffect(() => {
+    if (!flutterwaveConfig || !paymentOrderContext) return;
+
+    handleFlutterPayment({
+      callback: async (response) => {
+        try {
+          if (!response.transaction_id) {
+            toast.error("Payment was cancelled");
+            return;
+          }
+
+          const verifyRes = await fetch("/api/verify-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              transaction_id: response.transaction_id,
+              tx_ref: paymentOrderContext.txRef,
+              orderNumber: paymentOrderContext.orderNumber,
+            }),
+          });
+
+          if (!verifyRes.ok) {
+            toast.error("Payment verification failed");
+            return;
+          }
+
+          toast.success("Payment successful");
+          router.push(`/success?orderNumber=${paymentOrderContext.orderNumber}`);
+        } catch {
+          toast.error("Unable to verify payment");
+        } finally {
+          closePaymentModal();
+          setFlutterwaveConfig(null);
+          setPaymentOrderContext(null);
+          setLoading(false);
+        }
+      },
+      onClose: () => {
+        setFlutterwaveConfig(null);
+        setPaymentOrderContext(null);
+        setLoading(false);
+      },
+    });
+  }, [flutterwaveConfig, paymentOrderContext, handleFlutterPayment, router]);
 
   if (!isClient) {
     return <Loading />;
@@ -82,19 +138,21 @@ export default function CartClient({
 
     setLoading(true);
     try {
+      if (!process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY) {
+        toast.error("Payment gateway is not configured");
+        setLoading(false);
+        return;
+      }
+
       const orderNumber = crypto.randomUUID();
       const customerEmail = user?.emailAddresses[0]?.emailAddress ?? "Unknown";
-      const metadata: Metadata = {
-        orderNumber,
-        customerName: selectedAddress.fullName,
-        customerEmail,
-        clerkUserId: user!.id,
-      };
+      const txRef = `${orderNumber}-${crypto.randomUUID()}`;
 
       // Create a pending order in Sanity immediately
       await createPendingOrder({
         orderNumber,
-        customerName: metadata.customerName,
+        txRef,
+        customerName: selectedAddress.fullName,
         customerEmail,
         clerkUserId: user!.id,
         line1: selectedAddress.line1,
@@ -106,13 +164,24 @@ export default function CartClient({
         items: groupedItems,
       });
 
-      const checkoutUrl = await createCheckoutSession(groupedItems, metadata);
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
-      }
-    } catch (error) {
-      console.error("Error creating checkout session:", error);
-    } finally {
+      setFlutterwaveConfig({
+        public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY || "",
+        tx_ref: txRef,
+        amount: Number(getTotalPrice().toFixed(2)),
+        currency: "USD",
+        payment_options: "card,banktransfer,ussd",
+        customer: {
+          email: customerEmail,
+          name: selectedAddress.fullName,
+        },
+        customizations: {
+          title: "ONIZE Checkout",
+          description: `Order ${orderNumber}`,
+        },
+      });
+      setPaymentOrderContext({ orderNumber, txRef });
+    } catch {
+      toast.error("Could not start checkout");
       setLoading(false);
     }
   };
@@ -414,7 +483,7 @@ export default function CartClient({
                           height={16}
                           className="h-4 w-auto"
                         />
-                        {/* Stripe logo or icon could go here too */}
+                        {/* Payment provider logos can be shown here */}
                       </div>
                     </div>
                   </div>

@@ -23,13 +23,13 @@ export const orderType = defineType({
       ],
     },
     defineField({
-      name: "stripeCheckoutSessionId",
-      title: "Stripe Checkout Session ID",
+      name: "flutterwaveTxRef",
+      title: "Flutterwave Transaction Reference",
       type: "string",
     }),
     defineField({
-      name: "stripeCustomerId",
-      title: "Stripe Customer ID",
+      name: "flutterwaveCustomerEmail",
+      title: "Flutterwave Customer Email",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
@@ -52,8 +52,8 @@ export const orderType = defineType({
       validation: (Rule) => Rule.required().email(),
     }),
     defineField({
-      name: "stripePaymentIntentId",
-      title: "Stripe Payment Intent ID",
+      name: "flutterwaveTransactionId",
+      title: "Flutterwave Transaction ID",
       type: "string",
     }),
     defineField({

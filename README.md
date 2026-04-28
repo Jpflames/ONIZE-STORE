@@ -2,7 +2,7 @@
 
 ![ONIZE Preview](./public/preview.png)
 
-**ONIZE** is a production-ready, full-stack e-commerce storefront built with the latest web technologies. It ships with a beautiful storefront, a complete admin dashboard, Stripe payments, Clerk authentication, and a powerful Sanity CMS — everything you need to launch a real online store.
+**ONIZE** is a production-ready, full-stack e-commerce storefront built with the latest web technologies. It ships with a beautiful storefront, a complete admin dashboard, Flutterwave payments, Clerk authentication, and a powerful Sanity CMS — everything you need to launch a real online store.
 
 ---
 
@@ -29,7 +29,7 @@
 
 ### 💳 Checkout & Payments
 
-- Streamlined **Stripe Checkout** integration
+- Streamlined **Flutterwave** checkout integration
 - Manual address selection before payment
 - Webhook listener automatically confirms orders post-payment (`paymentStatus: paid`)
 
@@ -98,7 +98,7 @@
 | Animations       | Framer Motion / Motion                   |
 | Authentication   | Clerk                                    |
 | CMS & Database   | Sanity v3                                |
-| Payments         | Stripe Checkout                          |
+| Payments         | Flutterwave                              |
 | State Management | Zustand                                  |
 | UI Primitives    | shadcn/ui + Radix UI                     |
 | Icons            | Lucide React                             |
@@ -133,10 +133,10 @@ NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
 NEXT_PUBLIC_SANITY_DATASET=production
 SANITY_API_TOKEN=sk...          # needs write access for orders/webhooks
 
-# ─── Stripe Payments ───────────────────────────────────────────
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
+# ─── Flutterwave Payments ──────────────────────────────────────
+NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY=FLWPUBK_TEST-...
+FLUTTERWAVE_SECRET_KEY=FLWSECK_TEST-...
+FLUTTERWAVE_SECRET_HASH=your_webhook_hash
 
 # ─── App ───────────────────────────────────────────────────────
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
@@ -173,22 +173,21 @@ ADMIN_EMAIL=you@example.com     # Clerk account with this email gets /admin acce
    ```
    This loads sample products, categories, and orders so the store looks populated immediately.
 
-### Stripe (Payments)
+### Flutterwave (Payments)
 
-1. Go to [dashboard.stripe.com](https://dashboard.stripe.com) and create an account.
-2. Navigate to **Developers → API Keys**:
-   - Copy **Publishable key** → `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
-   - Copy **Secret key** → `STRIPE_SECRET_KEY`
-3. Navigate to **Developers → Webhooks → Add endpoint**:
-   - Endpoint URL: `https://yourdomain.com/api/webhook` (use [ngrok](https://ngrok.com) for local testing)
-   - Events to listen for: `checkout.session.completed`
-   - Copy the **Signing secret** → `STRIPE_WEBHOOK_SECRET`
+1. Go to [dashboard.flutterwave.com](https://dashboard.flutterwave.com) and create an account.
+2. Navigate to **Settings → API**:
+   - Copy **Public key** → `NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY`
+   - Copy **Secret key** → `FLUTTERWAVE_SECRET_KEY`
+3. Navigate to **Settings → Webhooks**:
+   - Endpoint URL: `https://yourdomain.com/api/flutterwave-webhook`
+   - Configure and copy your webhook hash → `FLUTTERWAVE_SECRET_HASH`
 
 > **Local webhook testing with ngrok:**
 >
 > ```bash
 > ngrok http 3000
-> # Use the generated https URL as your Stripe webhook endpoint
+> # Use the generated https URL as your Flutterwave webhook endpoint
 > ```
 
 ---
@@ -211,7 +210,7 @@ onize/
 │   │   ├── orders/        # Order management
 │   │   └── users/         # User management
 │   ├── api/
-│   │   └── webhook/       # Stripe webhook handler
+│   │   └── flutterwave-webhook/ # Flutterwave webhook handler
 │   └── studio/            # Embedded Sanity Studio
 ├── components/            # Shared UI components
 │   └── new/               # Feature-specific components

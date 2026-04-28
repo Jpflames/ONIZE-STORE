@@ -5,6 +5,7 @@ import { CartItem } from "@/store";
 
 interface PendingOrderPayload {
   orderNumber: string;
+  txRef: string;
   customerName: string;
   customerEmail: string;
   clerkUserId: string;
@@ -20,6 +21,7 @@ interface PendingOrderPayload {
 export async function createPendingOrder(payload: PendingOrderPayload) {
   const {
     orderNumber,
+    txRef,
     customerName,
     customerEmail,
     clerkUserId,
@@ -58,10 +60,10 @@ export async function createPendingOrder(payload: PendingOrderPayload) {
     state,
     postalCode,
     country,
-    stripeCustomerId: customerEmail,
-    stripeCheckoutSessionId: "",
-    stripePaymentIntentId: "",
-    currency: "ngn",
+    flutterwaveTxRef: txRef,
+    flutterwaveCustomerEmail: customerEmail,
+    flutterwaveTransactionId: "",
+    currency: "usd",
     amountDiscount: 0,
     products: sanityProducts,
     totalPrice,
