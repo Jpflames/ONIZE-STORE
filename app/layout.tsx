@@ -46,20 +46,6 @@ export const metadata: Metadata = {
   },
 };
 
-import { Urbanist, Plus_Jakarta_Sans } from "next/font/google";
-
-const urbanist = Urbanist({
-  subsets: ["latin"],
-  variable: "--font-urbanist",
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-plus-jakarta-sans",
-  weight: ["400", "500", "600", "700"],
-});
-
 const RootLayout = ({
   children,
 }: Readonly<{
@@ -67,10 +53,7 @@ const RootLayout = ({
 }>) => {
   return (
     <ClerkProvider>
-      <html
-        lang="en"
-        className={`${urbanist.variable} ${plusJakartaSans.variable}`}
-      >
+      <html lang="en">
         <body className="antialiased font-sans">{children}</body>
       </html>
     </ClerkProvider>

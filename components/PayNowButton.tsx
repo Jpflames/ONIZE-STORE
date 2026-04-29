@@ -32,10 +32,15 @@ export default function PayNowButton({ order }: { order: any }) {
           customer: {
             email: FLUTTERWAVE_PAYMENT_EMAIL,
             name: checkoutContext.customerName,
+            phone_number:
+              order?.phone_number || order?.phoneNumber || order?.phone || "",
           },
           customizations: {
             title: "ONIZE Checkout",
             description: `Order ${checkoutContext.orderNumber}`,
+            logo:
+              process.env.NEXT_PUBLIC_FLUTTERWAVE_LOGO_URL ||
+              "https://onize.reactbd.com/logo.png",
           },
         }
       : ({} as never),

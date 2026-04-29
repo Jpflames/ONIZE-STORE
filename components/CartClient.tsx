@@ -66,8 +66,8 @@ export default function CartClient({
     amount: number;
     currency: string;
     payment_options: string;
-    customer: { email: string; name: string };
-    customizations: { title: string; description: string };
+    customer: { email: string; name: string; phone_number: string };
+    customizations: { title: string; description: string; logo: string };
   } | null>(null);
   const [paymentOrderContext, setPaymentOrderContext] = useState<{
     orderNumber: string;
@@ -190,10 +190,18 @@ export default function CartClient({
         customer: {
           email: FLUTTERWAVE_PAYMENT_EMAIL,
           name: selectedAddress.fullName,
+          phone_number:
+            selectedAddress.phone_number ||
+            selectedAddress.phoneNumber ||
+            selectedAddress.phone ||
+            "",
         },
         customizations: {
           title: "ONIZE Checkout",
           description: `Order ${orderNumber}`,
+          logo:
+            process.env.NEXT_PUBLIC_FLUTTERWAVE_LOGO_URL ||
+            "https://onize.reactbd.com/logo.png",
         },
       });
       setPaymentOrderContext({ orderNumber, txRef });

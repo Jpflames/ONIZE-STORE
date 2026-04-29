@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
+
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
@@ -5,6 +8,10 @@
 /* @custom-variant dark (&:is(.dark *)); */
 
 :root {
+  /* Google fonts loaded at runtime (avoids build-time fetch failures) */
+  --font-urbanist: "Urbanist";
+  --font-plus-jakarta-sans: "Plus Jakarta Sans";
+
   --background: oklch(0.99 0 0);
   --foreground: oklch(0 0 0);
   --card: oklch(1 0 0);
