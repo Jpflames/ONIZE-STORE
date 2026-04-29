@@ -68,7 +68,7 @@ const AboutPage = () => {
               <div className="bg-background border border-border rounded-3xl p-6 md:p-8 shadow-sm">
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-border bg-muted/20">
                   <Image
-                    src="/images/ceo-portrait.svg"
+                    src="/images/Gloria.jpeg"
                     alt="Portrait of Gloria Bukayo O., Founder of Onize Crochets"
                     fill
                     className="object-cover"
