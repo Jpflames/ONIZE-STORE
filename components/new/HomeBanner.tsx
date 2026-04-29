@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Title from "../Title";
-import bannerImage from "@/images/banners/1.jpg";
+import bannerImage from "@/images/banners/3.jpg";
 
 const HomeBanner = () => {
   return (
