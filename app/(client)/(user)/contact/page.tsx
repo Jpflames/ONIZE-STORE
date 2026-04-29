@@ -120,7 +120,7 @@ const ContactPage = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Office</p>
                   <p className="font-bold text-lg">
-                    Central Park, New York, NY
+                    Minner, Niger state, Nigeria
                   </p>
                 </div>
               </div>

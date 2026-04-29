@@ -79,7 +79,7 @@ const sections = [
     icon: MessageCircle,
     number: "10",
     title: "💬 Need Help?",
-    body: "If you have any questions about your order or shipping:\n\nWhatsApp: +234 9058775521\nEmail: onizecrochets@gmail.com",
+    body: "If you have any questions about your order or shipping:\n\nWhatsApp: +2349058775521\nEmail: onizecrochets@gmail.com",
   },
 ];
 

@@ -5,7 +5,7 @@ export default function FeaturesSection() {
     {
       icon: Truck,
       title: "Free Shipping",
-      description: "On all orders over $100. Delivered to your door.",
+      description: "On all orders over $300. Delivered to your door.",
     },
     {
       icon: ShieldCheck,

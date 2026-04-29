@@ -1,0 +1,46 @@
+<svg width="900" height="1125" viewBox="0 0 900 1125" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Founder portrait illustration">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="900" y2="1125" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7F4FF"/>
+      <stop offset="0.55" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#F2F7FF"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="120" y1="200" x2="780" y2="980" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C3AED" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#06B6D4" stop-opacity="0.10"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(450 460) rotate(90) scale(520 520)">
+      <stop stop-color="#7C3AED" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softShadow" x="-40" y="-40" width="980" height="1205" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#0F172A" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <rect width="900" height="1125" rx="56" fill="url(#bg)"/>
+  <path d="M164 249C264 141 414 96 544 121C675 146 761 248 808 368C857 493 847 661 760 788C672 917 508 1005 362 983C216 961 104 829 80 675C56 520 78 343 164 249Z" fill="url(#accent)"/>
+  <circle cx="450" cy="460" r="520" fill="url(#glow)"/>
+
+  <!-- Minimal, elegant silhouette (placeholder until a real photo is provided) -->
+  <g filter="url(#softShadow)">
+    <path d="M450 745c130 0 236 83 270 198 8 27-13 52-41 52H221c-28 0-49-25-41-52 34-115 140-198 270-198Z" fill="#111827" fill-opacity="0.86"/>
+    <path d="M450 715c96 0 174-78 174-174S546 367 450 367s-174 78-174 174 78 174 174 174Z" fill="#111827" fill-opacity="0.92"/>
+    <path d="M294 512c20-109 86-177 156-177s136 68 156 177c-10 44-45 96-83 124-16 12-27 19-38 24-20 10-45 17-70 17s-50-7-70-17c-11-5-22-12-38-24-38-28-73-80-83-124Z" fill="#0B1220" fill-opacity="0.95"/>
+    <path d="M340 405c36-42 86-68 141-68s105 26 141 68c-14 6-31 9-49 9-35 0-66-11-92-29-26 18-57 29-92 29-18 0-35-3-49-9Z" fill="#0B1220" fill-opacity="0.85"/>
+  </g>
+
+  <!-- Name badge -->
+  <g>
+    <rect x="250" y="872" width="400" height="126" rx="28" fill="#FFFFFF" fill-opacity="0.78" stroke="#E5E7EB"/>
+    <text x="450" y="922" text-anchor="middle" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial" font-size="18" fill="#6B7280" letter-spacing="0.18em">
+      ONIZE CROCHETS
+    </text>
+    <text x="450" y="960" text-anchor="middle" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial" font-size="36" font-weight="800" fill="#111827">
+      GBO
+    </text>
+    <text x="450" y="992" text-anchor="middle" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial" font-size="16" fill="#6B7280">
+      Founder
+    </text>
+  </g>
+</svg>
