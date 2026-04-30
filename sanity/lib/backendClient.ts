@@ -6,7 +6,9 @@ export const backendClient = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: true, // Set to false if statically generating pages, using ISR or tag-based revalidation
-  //  revalidation
+  // This client is used for authenticated server actions + mutations.
+  // Using the CDN can return stale data right after writes (e.g. address save),
+  // so we disable it to ensure UI reflects changes immediately.
+  useCdn: false,
   token: process.env.SANITY_API_TOKEN,
 });
