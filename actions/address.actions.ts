@@ -52,7 +52,13 @@ export const addUserAddress = async (data: AddressData) => {
     return { success: true, address: newAddress };
   } catch (error) {
     console.error("Error adding user address:", error);
-    return { success: false, error: "Failed to add address" };
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === "string"
+          ? error
+          : "Failed to add address";
+    return { success: false, error: message };
   }
 };
 
@@ -76,7 +82,13 @@ export const setDefaultAddress = async (
     return { success: true };
   } catch (error) {
     console.error("Error setting default address:", error);
-    return { success: false, error: "Failed to set default address" };
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === "string"
+          ? error
+          : "Failed to set default address";
+    return { success: false, error: message };
   }
 };
 
@@ -93,7 +105,13 @@ export const updateUserAddress = async (
     return { success: true, address: updatedAddress };
   } catch (error) {
     console.error("Error updating user address:", error);
-    return { success: false, error: "Failed to update address" };
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === "string"
+          ? error
+          : "Failed to update address";
+    return { success: false, error: message };
   }
 };
 
@@ -103,6 +121,12 @@ export const deleteUserAddress = async (addressId: string) => {
     return { success: true };
   } catch (error) {
     console.error("Error deleting user address:", error);
-    return { success: false, error: "Failed to delete address" };
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === "string"
+          ? error
+          : "Failed to delete address";
+    return { success: false, error: message };
   }
 };
