@@ -6,9 +6,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://onize.reactbd.com"),
   icons: {
-    icon: [{ url: "data:," }],
-    shortcut: [{ url: "data:," }],
-    apple: [{ url: "data:," }],
+    icon: [],
+    shortcut: [],
+    apple: [],
   },
   title: {
     default: "ONIZE | Premium Ecommerce Experience",
