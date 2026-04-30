@@ -50,7 +50,7 @@ const AddressSelection = ({
   onSelect,
   selectedAddress,
 }: AddressSelectionProps) => {
-  const { user } = useUser();
+  const { user, isLoaded, isSignedIn } = useUser();
   const {
     open: openAddressSidebar,
     refreshTrigger,
@@ -60,6 +60,19 @@ const AddressSelection = ({
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Don't render if not authenticated or auth isn't loaded yet
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isSignedIn) {
+    return null;
+  }
 
   const fetchAddresses = async () => {
     if (!user) return;

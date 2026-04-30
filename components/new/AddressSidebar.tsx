@@ -39,10 +39,15 @@ interface Address {
 const AddressSidebar = () => {
   const { isOpen, close, editingAddress, refresh, setLastSavedAddress } =
     useAddressSidebar();
-  const { user } = useUser();
+  const { user, isLoaded, isSignedIn } = useUser();
   const [loading, setLoading] = useState(false);
   const [addressType, setAddressType] = useState<string>("home");
   const [customType, setCustomType] = useState<string>("");
+
+  // Handle case where user authentication hasn't loaded yet or user isn't signed in
+  if (isOpen && isLoaded && !isSignedIn) {
+    return null;
+  }
 
   const handleClose = () => {
     close();
