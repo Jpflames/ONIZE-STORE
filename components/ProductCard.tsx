@@ -8,6 +8,7 @@ import Link from "next/link";
 import PriceView from "./PriceView";
 import AddToCartButton from "./AddToCartButton";
 import Title from "./Title";
+import BuyNowModal from "@/components/BuyNowModal";
 import useWishlistStore from "@/wishlistStore";
 import useCompareStore from "@/compareStore";
 import useShareSidebar from "@/store/useShareSidebar";
@@ -69,13 +70,19 @@ const ProductCard = ({ product }: { product: Product }) => {
     openShare(product.slug?.current ?? "", product.name ?? "", image);
   };
 
+  const primaryImage = product.images?.[0];
+
   return (
     <div className="rounded-xl overflow-hidden group text-sm border border-border hover:border-primary/50 hoverEffect">
       <div className="overflow-hidden relative bg-secondary">
-        {product?.images && (
-          <Link href={`/product/${product?.slug?.current}`}>
+        {primaryImage ? (
+          <Link
+            href={`/product/${product?.slug?.current}?id=${encodeURIComponent(
+              product._id,
+            )}`}
+          >
             <Image
-              src={urlFor(product.images[0]).url()}
+              src={urlFor(primaryImage).width(800).height(800).url()}
               alt="productImage"
               width={500}
               height={500}
@@ -83,7 +90,7 @@ const ProductCard = ({ product }: { product: Product }) => {
               className={`w-full h-72 object-contain overflow-hidden transition-transform duration-500 ${product?.stock !== 0 && "group-hover:scale-105"}`}
             />
           </Link>
-        )}
+        ) : null}
 
         {/* Discount badge */}
         {product?.price && product?.discount && (
@@ -145,7 +152,10 @@ const ProductCard = ({ product }: { product: Product }) => {
           discount={product?.discount}
           className="text-lg"
         />
-        <AddToCartButton product={product} />
+        <div className="flex flex-col gap-2">
+          <AddToCartButton product={product} />
+          <BuyNowModal product={product} triggerClassName="w-full" />
+        </div>
       </div>
     </div>
   );

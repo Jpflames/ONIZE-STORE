@@ -198,7 +198,9 @@ const SearchBar = () => {
                         <div className="flex items-center gap-5">
                           {/* Image */}
                           <Link
-                            href={`/product/${product?.slug?.current}`}
+                            href={`/product/${product?.slug?.current}?id=${encodeURIComponent(
+                              product._id,
+                            )}`}
                             onClick={onClose}
                             className="relative h-24 w-24 md:h-28 md:w-28 shrink-0 overflow-hidden bg-muted"
                           >
@@ -215,7 +217,9 @@ const SearchBar = () => {
                           {/* Info */}
                           <div className="flex-1 min-w-0">
                             <Link
-                              href={`/product/${product?.slug?.current}`}
+                              href={`/product/${product?.slug?.current}?id=${encodeURIComponent(
+                                product._id,
+                              )}`}
                               onClick={onClose}
                               className="block"
                             >
@@ -279,7 +283,9 @@ const SearchBar = () => {
                           <div className="flex items-center gap-5">
                             {/* Image */}
                             <Link
-                              href={`/product/${product?.slug?.current}`}
+                              href={`/product/${product?.slug?.current}?id=${encodeURIComponent(
+                                product._id,
+                              )}`}
                               onClick={onClose}
                               className="relative h-20 w-20 shrink-0 overflow-hidden bg-muted rounded-lg"
                             >
@@ -296,7 +302,9 @@ const SearchBar = () => {
                             {/* Info */}
                             <div className="flex-1 min-w-0">
                               <Link
-                                href={`/product/${product?.slug?.current}`}
+                                href={`/product/${product?.slug?.current}?id=${encodeURIComponent(
+                                  product._id,
+                                )}`}
                                 onClick={onClose}
                                 className="block"
                               >

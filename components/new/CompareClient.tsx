@@ -42,7 +42,9 @@ function CellValue({ product, rowKey }: { product: Product; rowKey: string }) {
             </div>
           )}
           <Link
-            href={`/product/${product.slug?.current}`}
+            href={`/product/${product.slug?.current}?id=${encodeURIComponent(
+              product._id,
+            )}`}
             className="text-sm font-semibold text-center hover:text-primary transition-colors line-clamp-2"
           >
             {product.name}

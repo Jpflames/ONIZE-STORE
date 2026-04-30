@@ -3,7 +3,7 @@ import Container from "@/components/Container";
 import ImageView from "@/components/new/ImageView";
 import PriceView from "@/components/PriceView";
 import ProductCharacteristics from "@/components/ProductCharacteristics";
-import { getProductBySlug } from "@/sanity/helpers";
+import { getProductById, getProductBySlug } from "@/sanity/helpers";
 import { Heart } from "lucide-react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -15,6 +15,7 @@ import { TbTruckDelivery } from "react-icons/tb";
 import Breadcrumb from "@/components/Breadcrumb";
 import WishlistButton from "@/components/new/WishlistButton";
 import RelatedProducts from "@/components/RelatedProducts";
+import BuyNowSection from "@/components/BuyNowSection";
 
 import { Suspense } from "react";
 import ProductSkeleton from "@/components/ProductSkeleton";
@@ -22,11 +23,14 @@ import { urlFor } from "@/sanity/lib/image";
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ id?: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const sp = (await searchParams) ?? {};
+  const product = sp.id ? await getProductById(sp.id) : await getProductBySlug(slug);
 
   if (!product) {
     return {
@@ -64,11 +68,14 @@ export async function generateMetadata({
 
 const ProductPage = async ({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ id?: string }>;
 }) => {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const sp = (await searchParams) ?? {};
+  const product = sp.id ? await getProductById(sp.id) : await getProductBySlug(slug);
 
   if (!product) {
     return notFound();
@@ -102,6 +109,7 @@ const ProductPage = async ({
               product={product}
               className="bg-primary/80 text-primary-foreground hover:bg-primary hoverEffect"
             />
+            <BuyNowSection product={product} />
             <WishlistButton product={product} />
           </div>
           <ProductCharacteristics product={product} />

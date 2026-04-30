@@ -255,7 +255,9 @@ export default function CartClient({
                         <div className="flex flex-1 items-start gap-6">
                           {product?.images && (
                             <Link
-                              href={`/product/${product?.slug?.current}`}
+                              href={`/product/${product?.slug?.current}?id=${encodeURIComponent(
+                                product._id,
+                              )}`}
                               className="shrink-0 w-28 h-28 md:w-36 md:h-36 border border-border/50 rounded-xl overflow-hidden bg-muted group relative"
                             >
                               <Image
@@ -270,7 +272,9 @@ export default function CartClient({
                           <div className="flex-1 flex flex-col justify-between min-h-[112px] md:min-h-[144px]">
                             <div className="space-y-1">
                               <Link
-                                href={`/product/${product?.slug?.current}`}
+                                href={`/product/${product?.slug?.current}?id=${encodeURIComponent(
+                                  product._id,
+                                )}`}
                                 className="group"
                               >
                                 <h2 className="text-lg font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">

@@ -1,6 +1,7 @@
 import { defineQuery } from "next-sanity";
 import { sanityFetch } from "../lib/live";
 import { backendClient } from "../lib/backendClient";
+import { client } from "../lib/client";
 
 export const getAllProducts = async () => {
   const PRODUCTS_QUERY = defineQuery(`*[_type=="product"] | order(name asc)`);
@@ -113,21 +114,35 @@ export const searchProductsByName = async (searchParam: string) => {
 };
 
 export const getProductBySlug = async (slug: string) => {
+  // Use the public/published perspective for the storefront so the product page
+  // always matches what the product grid (client-side `client.fetch`) shows.
   const PRODUCT_BY_ID_QUERY = defineQuery(
-    `*[_type == "product" && slug.current == $slug] | order(name asc) [0]{
+    `*[_type == "product" && slug.current == $slug] | order(_updatedAt desc)[0]{
       ...,
       categories[]->
     }`,
   );
 
   try {
-    const product = await sanityFetch({
-      query: PRODUCT_BY_ID_QUERY,
-      params: {
-        slug,
-      },
-    });
-    return product?.data || null;
+    const product = await client.fetch(PRODUCT_BY_ID_QUERY, { slug });
+    return product || null;
+  } catch (error) {
+    console.error("Error fetching product by ID:", error);
+    return null;
+  }
+};
+
+export const getProductById = async (id: string) => {
+  const PRODUCT_BY_ID_QUERY = defineQuery(
+    `*[_type == "product" && _id == $id][0]{
+      ...,
+      categories[]->
+    }`,
+  );
+
+  try {
+    const product = await client.fetch(PRODUCT_BY_ID_QUERY, { id });
+    return product || null;
   } catch (error) {
     console.error("Error fetching product by ID:", error);
     return null;
