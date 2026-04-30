@@ -40,7 +40,7 @@ const socialLink = [
   },
   {
     title: "TikTok",
-    href: "https://www.tiktok.com/@onizecrochet",
+    href: "https://www.tiktok.com/@onize_crochets?_r=1&_t=ZS-95wxLmtjCL6",
     icon: <TikTokIcon />,
   },
 ];
