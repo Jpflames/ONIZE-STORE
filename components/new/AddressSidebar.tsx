@@ -24,7 +24,8 @@ import {
 import toast from "react-hot-toast";
 
 const AddressSidebar = () => {
-  const { isOpen, close, editingAddress, refresh } = useAddressSidebar();
+  const { isOpen, close, editingAddress, refresh, setLastSavedAddressId } =
+    useAddressSidebar();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const [addressType, setAddressType] = useState<string>("home");
@@ -89,6 +90,9 @@ const AddressSidebar = () => {
 
       if (res.success) {
         toast.success(editingAddress ? "Address updated!" : "Address added!");
+        if (res.address?._id) {
+          setLastSavedAddressId(res.address._id);
+        }
         refresh();
         handleClose();
       } else {
