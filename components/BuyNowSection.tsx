@@ -73,6 +73,7 @@ export default function BuyNowSection({ product }: { product: Product }) {
         try {
           if (!response.transaction_id) {
             toast.error("Payment was cancelled");
+            window.location.href = "/shop";
             return;
           }
 
@@ -106,6 +107,7 @@ export default function BuyNowSection({ product }: { product: Product }) {
         setFlutterwaveConfig(null);
         setPaymentOrderContext(null);
         setLoading(false);
+        window.location.href = "/shop";
       },
     });
   }, [flutterwaveConfig, paymentOrderContext, handleFlutterPayment]);

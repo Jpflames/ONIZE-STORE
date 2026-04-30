@@ -94,6 +94,7 @@ export default function CartClient({
         try {
           if (!response.transaction_id) {
             toast.error("Payment was cancelled");
+            router.push("/shop");
             return;
           }
 
@@ -127,6 +128,7 @@ export default function CartClient({
         setFlutterwaveConfig(null);
         setPaymentOrderContext(null);
         setLoading(false);
+        router.push("/shop");
       },
     });
   }, [flutterwaveConfig, paymentOrderContext, handleFlutterPayment, router]);

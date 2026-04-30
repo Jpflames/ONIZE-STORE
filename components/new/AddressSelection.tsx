@@ -54,8 +54,8 @@ const AddressSelection = ({
   const {
     open: openAddressSidebar,
     refreshTrigger,
-    lastSavedAddressId,
-    setLastSavedAddressId,
+    lastSavedAddress,
+    setLastSavedAddress,
   } = useAddressSidebar();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,14 +67,11 @@ const AddressSelection = ({
       const data = await getUserAddresses(user.id);
       setAddresses(data);
       if (data.length > 0) {
-        if (lastSavedAddressId) {
-          const newlySaved = data.find((a: any) => a._id === lastSavedAddressId);
-          if (newlySaved) {
-            onSelect(newlySaved);
-            setLastSavedAddressId(null);
-            return;
-          }
-          setLastSavedAddressId(null);
+        if (lastSavedAddress) {
+          // Directly select the newly saved address
+          onSelect(lastSavedAddress);
+          setLastSavedAddress(null);
+          return;
         }
         if (selectedAddress) {
           const upToDateSelected = data.find(

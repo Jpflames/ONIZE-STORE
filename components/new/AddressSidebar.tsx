@@ -23,8 +23,21 @@ import {
 } from "@/actions/address.actions";
 import toast from "react-hot-toast";
 
+interface Address {
+  _id: string;
+  addressType: string;
+  fullName: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  state?: string;
+  postalCode?: string;
+  country: string;
+  isDefault: boolean;
+}
+
 const AddressSidebar = () => {
-  const { isOpen, close, editingAddress, refresh, setLastSavedAddressId } =
+  const { isOpen, close, editingAddress, refresh, setLastSavedAddress } =
     useAddressSidebar();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
@@ -90,8 +103,8 @@ const AddressSidebar = () => {
 
       if (res.success) {
         toast.success(editingAddress ? "Address updated!" : "Address added!");
-        if (res.address?._id) {
-          setLastSavedAddressId(res.address._id);
+        if (res.address && !editingAddress) {
+          setLastSavedAddress(res.address as Address);
         }
         refresh();
         handleClose();
@@ -147,7 +160,7 @@ const AddressSidebar = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            <form onSubmit={handleSubmit} key={editingAddress?._id || 'new'} className="flex flex-col gap-6">
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="addressType">Address Type</Label>

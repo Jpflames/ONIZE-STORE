@@ -54,6 +54,7 @@ export default function PayNowButton({ order }: { order: any }) {
         try {
           if (!response.transaction_id) {
             toast.error("Payment was cancelled");
+            window.location.href = "/shop";
             return;
           }
 
@@ -85,6 +86,7 @@ export default function PayNowButton({ order }: { order: any }) {
       onClose: () => {
         setCheckoutContext(null);
         setIsPending(false);
+        window.location.href = "/shop";
       },
     });
   }, [checkoutContext, handleFlutterPayment]);

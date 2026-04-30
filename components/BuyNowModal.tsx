@@ -18,6 +18,7 @@ import { useAuth, useUser } from "@clerk/nextjs";
 import { CreditCard } from "lucide-react";
 import { closePaymentModal, useFlutterwave } from "flutterwave-react-v3";
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 const SHIPPING_FEE_NIGERIA = 20;
@@ -41,6 +42,7 @@ export default function BuyNowModal({
   const { isSignedIn } = useAuth();
   const { user } = useUser();
   const { open: openLoginSidebar } = useLoginSidebar();
+  const router = useRouter();
 
   const [open, setOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<any>(null);
@@ -83,6 +85,7 @@ export default function BuyNowModal({
         try {
           if (!response.transaction_id) {
             toast.error("Payment was cancelled");
+            router.push("/shop");
             return;
           }
 
@@ -117,9 +120,10 @@ export default function BuyNowModal({
         setFlutterwaveConfig(null);
         setPaymentOrderContext(null);
         setLoading(false);
+        router.push("/shop");
       },
     });
-  }, [flutterwaveConfig, paymentOrderContext, handleFlutterPayment]);
+  }, [flutterwaveConfig, paymentOrderContext, handleFlutterPayment, router]);
 
   const startCheckout = async () => {
     if (!isSignedIn) {
