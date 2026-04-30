@@ -1,6 +1,6 @@
 "use client";
 
-import { Facebook, Github, Linkedin, Slack, Youtube, Instagram  } from "lucide-react";
+import { Instagram, Youtube } from "lucide-react";
 import React from "react";
 import {
   Tooltip,
@@ -16,6 +16,17 @@ interface Props {
   tooltipClassName?: string;
 }
 
+const TikTokIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    className="w-5 h-5"
+    fill="currentColor"
+  >
+    <path d="M9 7.1h2.2v6.5c0 1.8 1.1 3.4 2.8 4.1 1 .4 2.2.4 3.3.1v2c-1.5.4-3 .2-4.4-.6A5.9 5.9 0 0 1 10 13.4V7.1ZM17.2 6.1V3.5h2.3v2.6a4.4 4.4 0 0 0 3.2 1.3v2.3c-1.3 0-2.5-.3-3.6-1A6.6 6.6 0 0 1 17.2 6.1Z" />
+  </svg>
+);
+
 const socialLink = [
   {
     title: "Youtube",
@@ -23,29 +34,14 @@ const socialLink = [
     icon: <Youtube className="w-5 h-5" />,
   },
   {
-    title: "Github",
-    href: "",
-    icon: <Github className="w-5 h-5" />,
-  },
-  {
-    title: "Linkedin",
-    href: "",
-    icon: <Linkedin className="w-5 h-5" />,
-  },
-  {
-    title: "Facebook",
-    href: "",
-    icon: <Facebook className="w-5 h-5" />,
-  },
-  {
-    title: "Slack",
-    href: "",
-    icon: <Slack className="w-5 h-5" />,
-  },
-  {
     title: "Instagram",
     href: "https://www.instagram.com/onizecrochet?igsh=MzNveTNneTk2MXIw",
     icon: <Instagram className="w-5 h-5" />,
+  },
+  {
+    title: "TikTok",
+    href: "https://www.tiktok.com/@onizecrochet",
+    icon: <TikTokIcon />,
   },
 ];
 

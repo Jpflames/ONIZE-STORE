@@ -73,8 +73,8 @@ const Footer = async () => {
 
         {/* Bottom copyright section */}
         <div className="py-6 border-t border-border text-center text-sm text-muted-foreground">
-          <Link href="https://reactbd.com">
-            © {new Date().getFullYear()} reactbd. All rights reserved.
+          <Link href="/">
+            © {new Date().getFullYear()} ONIZE STORE. All rights reserved.
           </Link>
         </div>
       </div>
