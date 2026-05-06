@@ -3,17 +3,17 @@ import Container from "@/components/Container";
 import PriceFormatter from "@/components/PriceFormatter";
 import QuantityButtons from "@/components/QuantityButtons";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import { urlFor } from "@/sanity/lib/image";
 import useCartStore from "@/store";
-import { useAuth, useUser } from "@clerk/nextjs";
 import { Heart, ShoppingBag, Trash, Trash2, HomeIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import EmptyCart from "@/components/EmptyCart";
-import { createPendingOrder } from "@/actions/createPendingOrder";
 import paypalLogo from "@/images/paypalLogo.png";
 import {
   Tooltip,
@@ -25,17 +25,10 @@ import Loading from "@/components/Loading";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { useRouter } from "next/navigation";
-import useLoginSidebar from "@/hooks/useLoginSidebar";
-import AddressSelection from "@/components/new/AddressSelection";
-import { closePaymentModal, useFlutterwave } from "flutterwave-react-v3";
+import useGuestCheckoutStore from "@/guestCheckoutStore";
 
-const SHIPPING_FEE_NIGERIA = 20;
-const SHIPPING_FEE_INTERNATIONAL = 40;
-const FLUTTERWAVE_PAYMENT_EMAIL = "onizecrochetspayment2@gmail.com";
-
-function isNigeria(country?: string) {
-  const c = (country ?? "").trim().toLowerCase();
-  return c === "nigeria" || c === "ng";
+function isValidEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
 
 export default function CartClient({
@@ -55,83 +48,16 @@ export default function CartClient({
   const [loading, setLoading] = useState(false);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const groupedItems = useCartStore((state) => state.getGroupedItems());
-  const { isSignedIn } = useAuth();
-  const { user } = useUser();
   const router = useRouter();
-  const { open: openLoginSidebar } = useLoginSidebar();
-  const [selectedAddress, setSelectedAddress] = useState<any>(null);
-  const [flutterwaveConfig, setFlutterwaveConfig] = useState<{
-    public_key: string;
-    tx_ref: string;
-    amount: number;
-    currency: string;
-    payment_options: string;
-    customer: { email: string; name: string; phone_number: string };
-    customizations: { title: string; description: string; logo: string };
-  } | null>(null);
-  const [paymentOrderContext, setPaymentOrderContext] = useState<{
-    orderNumber: string;
-    txRef: string;
-  } | null>(null);
-  const handleFlutterPayment = useFlutterwave(flutterwaveConfig ?? ({} as never));
+  const details = useGuestCheckoutStore((s) => s.details);
+  const setField = useGuestCheckoutStore((s) => s.setField);
   const subtotal = getTotalPrice();
-  const shippingCost = selectedAddress
-    ? isNigeria(selectedAddress.country)
-      ? SHIPPING_FEE_NIGERIA
-      : SHIPPING_FEE_INTERNATIONAL
-    : 0;
+  const shippingCost = 0;
   const orderTotal = subtotal + shippingCost;
 
   useEffect(() => {
     setIsClient(true);
   }, []);
-
-  useEffect(() => {
-    if (!flutterwaveConfig || !paymentOrderContext) return;
-
-    handleFlutterPayment({
-      callback: async (response) => {
-        try {
-          if (!response.transaction_id) {
-            toast.error("Payment was cancelled");
-            router.push("/shop");
-            return;
-          }
-
-          const verifyRes = await fetch("/api/verify-payment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              transaction_id: response.transaction_id,
-              tx_ref: paymentOrderContext.txRef,
-              orderNumber: paymentOrderContext.orderNumber,
-            }),
-          });
-
-          if (!verifyRes.ok) {
-            toast.error("Payment verification failed");
-            return;
-          }
-
-          toast.success("Payment successful");
-          router.push(`/success?orderNumber=${paymentOrderContext.orderNumber}`);
-        } catch {
-          toast.error("Unable to verify payment");
-        } finally {
-          closePaymentModal();
-          setFlutterwaveConfig(null);
-          setPaymentOrderContext(null);
-          setLoading(false);
-        }
-      },
-      onClose: () => {
-        setFlutterwaveConfig(null);
-        setPaymentOrderContext(null);
-        setLoading(false);
-        router.push("/shop");
-      },
-    });
-  }, [flutterwaveConfig, paymentOrderContext, handleFlutterPayment, router]);
 
   if (!isClient) {
     return <Loading />;
@@ -144,69 +70,46 @@ export default function CartClient({
   };
 
   const handleCheckout = async () => {
-    if (!isSignedIn) {
-      openLoginSidebar();
+    const fullName = details.fullName.trim();
+    const email = details.email.trim();
+    const phone = details.phone.trim();
+    const address = details.address.trim();
+
+    if (!groupedItems.length) {
+      toast.error("Your cart is empty");
       return;
     }
 
-    if (!selectedAddress) {
-      toast.error("Please select a shipping address");
+    if (!fullName) return toast.error("Full name is required");
+    if (!email || !isValidEmail(email)) return toast.error("Valid email is required");
+    if (!phone) return toast.error("Phone number is required");
+    if (!address) return toast.error("Address is required");
+
+    if (!process.env.NEXT_PUBLIC_FLW_PUBLIC_KEY) {
+      toast.error("Payment gateway is not configured");
       return;
     }
 
     setLoading(true);
     try {
-      if (!process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY) {
-        toast.error("Payment gateway is not configured");
-        setLoading(false);
-        return;
+      const res = await fetch("/api/flutterwave/initiate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer: { fullName, email, phone, address },
+          items: groupedItems.map((i) => ({
+            productId: i.product._id,
+            quantity: i.quantity,
+          })),
+        }),
+      });
+
+      const data = (await res.json()) as { paymentLink?: string; error?: string };
+      if (!res.ok || !data.paymentLink) {
+        throw new Error(data.error || "Unable to start payment");
       }
 
-      const orderNumber = crypto.randomUUID();
-      const customerEmail = user?.emailAddresses[0]?.emailAddress ?? "Unknown";
-      const txRef = `${orderNumber}-${crypto.randomUUID()}`;
-
-      // Create a pending order in Sanity immediately
-      await createPendingOrder({
-        orderNumber,
-        txRef,
-        shippingAmount: shippingCost,
-        customerName: selectedAddress.fullName,
-        customerEmail,
-        clerkUserId: user!.id,
-        line1: selectedAddress.line1,
-        line2: selectedAddress.line2,
-        city: selectedAddress.city,
-        state: selectedAddress.state,
-        postalCode: selectedAddress.postalCode,
-        country: selectedAddress.country,
-        items: groupedItems,
-      });
-
-      setFlutterwaveConfig({
-        public_key: process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY || "",
-        tx_ref: txRef,
-        amount: Number(orderTotal.toFixed(2)),
-        currency: "USD",
-        payment_options: "card,banktransfer,ussd",
-        customer: {
-          email: FLUTTERWAVE_PAYMENT_EMAIL,
-          name: selectedAddress.fullName,
-          phone_number:
-            selectedAddress.phone_number ||
-            selectedAddress.phoneNumber ||
-            selectedAddress.phone ||
-            "",
-        },
-        customizations: {
-          title: "ONIZE Checkout",
-          description: `Order ${orderNumber}`,
-          logo:
-            process.env.NEXT_PUBLIC_FLUTTERWAVE_LOGO_URL ||
-            "https://onize.reactbd.com/logo.png",
-        },
-      });
-      setPaymentOrderContext({ orderNumber, txRef });
+      window.location.href = data.paymentLink;
     } catch {
       toast.error("Could not start checkout");
       setLoading(false);
@@ -460,12 +363,38 @@ export default function CartClient({
                     <Separator />
 
                     <div className="space-y-4">
-                      {isSignedIn && (
-                        <AddressSelection
-                          onSelect={setSelectedAddress}
-                          selectedAddress={selectedAddress}
-                        />
-                      )}
+                      <div className="space-y-3">
+                        <div className="grid grid-cols-1 gap-3">
+                          <Input
+                            value={details.fullName}
+                            onChange={(e) => setField("fullName", e.target.value)}
+                            placeholder="Full name"
+                            className="h-12 rounded-xl"
+                            autoComplete="name"
+                          />
+                          <Input
+                            value={details.email}
+                            onChange={(e) => setField("email", e.target.value)}
+                            placeholder="Email"
+                            className="h-12 rounded-xl"
+                            autoComplete="email"
+                          />
+                          <Input
+                            value={details.phone}
+                            onChange={(e) => setField("phone", e.target.value)}
+                            placeholder="Phone"
+                            className="h-12 rounded-xl"
+                            autoComplete="tel"
+                          />
+                          <Textarea
+                            value={details.address}
+                            onChange={(e) => setField("address", e.target.value)}
+                            placeholder="Delivery address"
+                            className="rounded-xl min-h-24"
+                            rows={3}
+                          />
+                        </div>
+                      </div>
 
                       <Separator />
 
@@ -479,7 +408,7 @@ export default function CartClient({
 
                       <Button
                         onClick={handleCheckout}
-                        disabled={loading || (isSignedIn && !selectedAddress)}
+                        disabled={loading}
                         className="w-full h-14 text-base font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-[0.98] transition-all"
                       >
                         {loading ? (
@@ -487,14 +416,8 @@ export default function CartClient({
                             <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
                             Processing...
                           </div>
-                        ) : isSignedIn ? (
-                          selectedAddress ? (
-                            "Place Order"
-                          ) : (
-                            "Select Address to Continue"
-                          )
                         ) : (
-                          "Sign In to Checkout"
+                          "Checkout"
                         )}
                       </Button>
                     </div>
@@ -548,16 +471,12 @@ export default function CartClient({
                     </div>
                     <Button
                       onClick={handleCheckout}
-                      disabled={loading || (isSignedIn && !selectedAddress)}
+                      disabled={loading}
                       className="h-14 px-8 text-base font-bold rounded-2xl shadow-lg shadow-primary/20 active:scale-95 transition-all"
                     >
                       {loading
                         ? "..."
-                        : isSignedIn
-                          ? selectedAddress
-                            ? "Checkout"
-                            : "Address"
-                          : "Sign In"}
+                        : "Checkout"}
                     </Button>
                   </div>
                 </div>

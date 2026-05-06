@@ -8,87 +8,45 @@ export const orderType = defineType({
   icon: BasketIcon,
   fields: [
     defineField({
-      name: "orderNumber",
-      title: "Order Number",
-      type: "string",
-      validation: (Rule) => Rule.required(),
-    }),
-    {
-      name: "invoice",
-      type: "object",
-      fields: [
-        { name: "id", type: "string" },
-        { name: "number", type: "string" },
-        { name: "hosted_invoice_url", type: "url" },
-      ],
-    },
-    defineField({
-      name: "flutterwaveTxRef",
-      title: "Flutterwave Transaction Reference",
-      type: "string",
-    }),
-    defineField({
-      name: "flutterwaveCustomerEmail",
-      title: "Flutterwave Customer Email",
+      name: "id",
+      title: "Order ID",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "clerkUserId",
-      title: "Store User ID",
+      name: "tx_ref",
+      title: "Flutterwave tx_ref",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "customerName",
-      title: "Customer Name",
+      name: "fullName",
+      title: "Full Name",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "email",
-      title: "Customer Email",
+      title: "Email",
       type: "string",
       validation: (Rule) => Rule.required().email(),
     }),
     defineField({
-      name: "flutterwaveTransactionId",
-      title: "Flutterwave Transaction ID",
+      name: "phone",
+      title: "Phone",
       type: "string",
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "line1",
-      title: "Address Line 1",
-      type: "string",
+      name: "address",
+      title: "Address",
+      type: "text",
+      rows: 3,
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "line2",
-      title: "Address Line 2",
-      type: "string",
-    }),
-    defineField({
-      name: "city",
-      title: "City",
-      type: "string",
-    }),
-    defineField({
-      name: "state",
-      title: "State",
-      type: "string",
-    }),
-    defineField({
-      name: "postalCode",
-      title: "Postal Code",
-      type: "string",
-    }),
-    defineField({
-      name: "country",
-      title: "Country",
-      type: "string",
-    }),
-    defineField({
-      name: "products",
-      title: "Products",
+      name: "items",
+      title: "Items",
       type: "array",
       of: [
         defineArrayMember({
@@ -96,13 +54,13 @@ export const orderType = defineType({
           fields: [
             defineField({
               name: "product",
-              title: "Product Bought",
+              title: "Product",
               type: "reference",
               to: [{ type: "product" }],
             }),
             defineField({
               name: "quantity",
-              title: "Quantity Purchased",
+              title: "Quantity",
               type: "number",
             }),
           ],
@@ -126,72 +84,54 @@ export const orderType = defineType({
       ],
     }),
     defineField({
-      name: "totalPrice",
-      title: "Total Price",
+      name: "total",
+      title: "Total",
       type: "number",
       validation: (Rule) => Rule.required().min(0),
     }),
     defineField({
-      name: "currency",
-      title: "Currency",
-      type: "string",
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "amountDiscount",
-      title: "Amount Discount",
-      type: "number",
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "paymentStatus",
-      title: "Payment Status",
+      name: "status",
+      title: "Status",
       type: "string",
       options: {
         list: [
           { title: "Pending", value: "pending" },
           { title: "Paid", value: "paid" },
-          { title: "Cancelled", value: "cancelled" },
+          { title: "Failed", value: "failed" },
         ],
       },
       initialValue: "pending",
     }),
     defineField({
-      name: "status",
-      title: "Order Status",
-      type: "string",
-      options: {
-        list: [
-          { title: "Pending", value: "pending" },
-          { title: "Confirmed", value: "confirmed" },
-          { title: "Packed", value: "packed" },
-          { title: "Delivering", value: "delivering" },
-          { title: "Delivered", value: "delivered" },
-          { title: "Complete", value: "complete" },
-        ],
-      },
-      initialValue: "pending",
-    }),
-    defineField({
-      name: "orderDate",
-      title: "Order Date",
+      name: "createdAt",
+      title: "Created At",
       type: "datetime",
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "transaction",
+      title: "Flutterwave Transaction",
+      type: "object",
+      fields: [
+        { name: "id", type: "number", title: "Transaction ID" },
+        { name: "amount", type: "number", title: "Amount" },
+        { name: "currency", type: "string", title: "Currency" },
+        { name: "status", type: "string", title: "Status" },
+      ],
     }),
   ],
   preview: {
     select: {
-      name: "customerName",
-      amount: "totalPrice",
-      currency: "currency",
-      orderId: "orderNumber",
+      name: "fullName",
+      amount: "total",
+      orderId: "id",
       email: "email",
     },
     prepare(select) {
       const orderIdSnippet = `${select.orderId.slice(0, 5)}...${select.orderId.slice(-5)}`;
       return {
         title: `${select.name} (${orderIdSnippet})`,
-        subtitle: `${select.amount} ${select.currency}, ${select.email}`,
+        subtitle: `${select.amount}, ${select.email}`,
         media: BasketIcon,
       };
     },

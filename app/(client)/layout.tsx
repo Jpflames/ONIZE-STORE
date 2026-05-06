@@ -3,8 +3,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { SanityLive } from "@/sanity/lib/live";
 import { Toaster } from "react-hot-toast";
-import LoginSidebar from "@/components/new/LoginSidebar";
-import AddressSidebar from "@/components/new/AddressSidebar";
 import ShareSidebar from "@/components/new/ShareSidebar";
 
 export const metadata: Metadata = {
@@ -22,8 +20,6 @@ export default async function RootLayout({
       <Header />
       {children}
       <Footer />
-      <LoginSidebar />
-      <AddressSidebar />
       <ShareSidebar />
       <Toaster
         position="bottom-right"

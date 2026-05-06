@@ -2,7 +2,7 @@
 
 ![ONIZE Preview](./public/preview.png)
 
-**ONIZE** is a production-ready, full-stack e-commerce storefront built with the latest web technologies. It ships with a beautiful storefront, a complete admin dashboard, Flutterwave payments, Clerk authentication, and a powerful Sanity CMS — everything you need to launch a real online store.
+**ONIZE** is a production-ready, full-stack e-commerce storefront built with the latest web technologies. It ships with a beautiful storefront, **guest checkout with Flutterwave payments**, and a powerful Sanity CMS — everything you need to launch a real online store.
 
 ---
 
@@ -25,13 +25,13 @@
 
 - Persistent cart powered by **Zustand** (survives page refreshes)
 - Quantity controls, item removal, subtotal, and order summary
-- Guest users can browse and add to cart; sign-in required only at checkout
+- Guest users can browse, add to cart, and checkout without signing in
 
 ### 💳 Checkout & Payments
 
-- Streamlined **Flutterwave** checkout integration
-- Manual address selection before payment
-- Webhook listener automatically confirms orders post-payment (`paymentStatus: paid`)
+- Guest checkout form (name, email, phone, address)
+- Server-initiated **Flutterwave** redirect checkout (`/api/flutterwave/initiate`)
+- Webhook listener automatically confirms orders post-payment (`status: paid`)
 
 ### ❤️ Wishlist
 
@@ -51,18 +51,6 @@
 - Slide-in share sidebar for any product
 - Share to Twitter/X, Facebook, WhatsApp, LinkedIn, Reddit, Email
 - One-click copy link
-
-### 👤 Authentication
-
-- Powered by **Clerk** — sign up, sign in, Google OAuth out of the box
-- Login sidebar slides in without leaving the cart page
-
-### 🗂️ Admin Dashboard (`/admin`)
-
-- Protected route — only the `ADMIN_EMAIL` has access
-- **Orders** — view all orders, update order status, bulk delete with confirmation
-- **Users** — list all registered Clerk users, export CSV, single/bulk delete
-- **Dashboard** — revenue overview, order count, user count, average order value, recent orders table
 
 ### 📦 CMS — Sanity Studio (`/studio`)
 
@@ -96,7 +84,6 @@
 | Framework        | Next.js 15 (App Router + Server Actions) |
 | Styling          | Tailwind CSS v4                          |
 | Animations       | Framer Motion / Motion                   |
-| Authentication   | Clerk                                    |
 | CMS & Database   | Sanity v3                                |
 | Payments         | Flutterwave                              |
 | State Management | Zustand                                  |
@@ -120,42 +107,23 @@ pnpm install
 Create a `.env` file in the project root and fill in the values below. Each service has instructions in the sections that follow.
 
 ```env
-# ─── Clerk Authentication ─────────────────────────────────────
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_...
-CLERK_SECRET_KEY=sk_live_...
-
-# Clerk redirect URLs (keep these as-is for local dev)
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-
 # ─── Sanity CMS ────────────────────────────────────────────────
 NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
 NEXT_PUBLIC_SANITY_DATASET=production
 SANITY_API_TOKEN=sk...          # needs write access for orders/webhooks
 
 # ─── Flutterwave Payments ──────────────────────────────────────
-NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY=FLWPUBK_TEST-...
-FLUTTERWAVE_SECRET_KEY=FLWSECK_TEST-...
-FLUTTERWAVE_SECRET_HASH=your_webhook_hash
+NEXT_PUBLIC_FLW_PUBLIC_KEY=FLWPUBK_TEST-...
+FLW_SECRET_KEY=FLWSECK_TEST-...
+FLW_SECRET_HASH=your_webhook_hash
 
 # ─── App ───────────────────────────────────────────────────────
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
-
-# ─── Admin Access ──────────────────────────────────────────────
-ADMIN_EMAIL=you@example.com     # Clerk account with this email gets /admin access
 ```
 
 ---
 
 ## 🔑 Credential Setup Guide
-
-### Clerk (Authentication)
-
-1. Go to [dashboard.clerk.com](https://dashboard.clerk.com) and create a new application.
-2. Choose your sign-in methods (Email, Google, etc.).
-3. Copy your **Publishable Key** → `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
-4. Copy your **Secret Key** → `CLERK_SECRET_KEY`
-5. In Clerk Dashboard → **Paths**, confirm the sign-in/sign-up URLs match your `.env`.
 
 ### Sanity (CMS)
 
@@ -177,11 +145,11 @@ ADMIN_EMAIL=you@example.com     # Clerk account with this email gets /admin acce
 
 1. Go to [dashboard.flutterwave.com](https://dashboard.flutterwave.com) and create an account.
 2. Navigate to **Settings → API**:
-   - Copy **Public key** → `NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY`
-   - Copy **Secret key** → `FLUTTERWAVE_SECRET_KEY`
+  - Copy **Public key** → `NEXT_PUBLIC_FLW_PUBLIC_KEY`
+  - Copy **Secret key** → `FLW_SECRET_KEY`
 3. Navigate to **Settings → Webhooks**:
-   - Endpoint URL: `https://yourdomain.com/api/flutterwave-webhook`
-   - Configure and copy your webhook hash → `FLUTTERWAVE_SECRET_HASH`
+   - Endpoint URL: `https://yourdomain.com/api/flutterwave/webhook`
+  - Configure and copy your webhook hash → `FLW_SECRET_HASH`
 
 > **Local webhook testing with ngrok:**
 >
@@ -205,12 +173,8 @@ onize/
 │   │   ├── compare/       # Product comparison
 │   │   ├── wishlist/      # Saved products
 │   │   └── (user)/        # About, FAQ, Terms, Privacy, Contact
-│   ├── admin/             # Protected admin dashboard
-│   │   ├── page.tsx       # Dashboard overview
-│   │   ├── orders/        # Order management
-│   │   └── users/         # User management
 │   ├── api/
-│   │   └── flutterwave-webhook/ # Flutterwave webhook handler
+│   │   └── flutterwave/         # Flutterwave API routes (initiate/verify/webhook)
 │   └── studio/            # Embedded Sanity Studio
 ├── components/            # Shared UI components
 │   └── new/               # Feature-specific components

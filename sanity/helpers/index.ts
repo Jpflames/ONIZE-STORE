@@ -186,11 +186,10 @@ export const getMyOrders = async (email: string) => {
   }
 
   const MY_ORDERS_QUERY =
-    defineQuery(`*[_type == 'order' && email == $email] | order(orderDate desc){
-    ...,products[]{
-      ...,product->
-    }
-  }`);
+    defineQuery(`*[_type == 'order' && email == $email] | order(createdAt desc){
+      id,fullName,email,phone,address,total,status,tx_ref,createdAt,
+      items[]{quantity,product->}
+    }`);
 
   try {
     const orders = await backendClient.fetch(MY_ORDERS_QUERY, { email });
@@ -201,33 +200,19 @@ export const getMyOrders = async (email: string) => {
   }
 };
 
-export const getOrderById = async (id: string) => {
-  if (!id) throw new Error("Order ID is required");
+export const getOrderById = async (orderId: string) => {
+  if (!orderId) throw new Error("Order ID is required");
 
-  const ORDER_BY_ID_QUERY = `*[_type == 'order' && _id == $id][0]{
-    ...,products[]{
-      ...,product->
-    }
+  const ORDER_BY_ID_QUERY = `*[_type == 'order' && id == $orderId][0]{
+    id,fullName,email,phone,address,total,status,tx_ref,createdAt,
+    items[]{quantity,product->}
   }`;
 
   try {
-    const order = await backendClient.fetch(ORDER_BY_ID_QUERY, { id });
+    const order = await backendClient.fetch(ORDER_BY_ID_QUERY, { orderId });
     return order || null;
   } catch (error) {
     console.error("Error fetching order by id:", error);
-    return null;
-  }
-};
-export const getUserAddress = async (email: string) => {
-  if (!email) return null;
-
-  const ADDRESS_QUERY = `*[_type == "address" && email == $email][0]`;
-
-  try {
-    const address = await backendClient.fetch(ADDRESS_QUERY, { email });
-    return address || null;
-  } catch (error) {
-    console.error("Error fetching user address:", error);
     return null;
   }
 };

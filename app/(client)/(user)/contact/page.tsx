@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import { Mail, User, Send, CheckCircle2, AlertCircle } from "lucide-react";
 import Container from "@/components/Container";
@@ -13,7 +12,6 @@ import { createContactMessage } from "@/actions/contact.actions";
 import toast from "react-hot-toast";
 
 const ContactPage = () => {
-  const { user, isLoaded } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [formData, setFormData] = useState({
@@ -21,16 +19,6 @@ const ContactPage = () => {
     email: "",
     message: "",
   });
-
-  useEffect(() => {
-    if (isLoaded && user) {
-      setFormData((prev) => ({
-        ...prev,
-        name: user.fullName || "",
-        email: user.emailAddresses[0]?.emailAddress || "",
-      }));
-    }
-  }, [user, isLoaded]);
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};

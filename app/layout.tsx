@@ -1,5 +1,4 @@
 import React from "react";
-import { ClerkProvider } from "@clerk/nextjs";
 import { Metadata } from "next";
 import "./globals.css";
 
@@ -57,11 +56,9 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className="antialiased font-sans">{children}</body>
-      </html>
-    </ClerkProvider>
+    <html lang="en">
+      <body className="antialiased font-sans">{children}</body>
+    </html>
   );
 };
 
