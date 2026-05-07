@@ -1,4 +1,5 @@
 import { backendClient } from "@/sanity/lib/backendClient";
+import { removeTag, addTag } from "@/lib/mailchimp";
 
 type FlutterwaveVerifyByReferenceResponse = {
   status: string;
@@ -118,6 +119,17 @@ export async function finalizePaidOrder(args: {
       },
     })
     .commit();
+
+  // Update Mailchimp tags for successful payments
+  if (nextStatus === "paid" && order.email) {
+    try {
+      await removeTag(order.email, "abandoned_cart");
+      await addTag(order.email, "purchased");
+    } catch (error) {
+      console.error("Failed to update Mailchimp tags for paid order:", error);
+      // Don't fail the payment if Mailchimp update fails
+    }
+  }
 
   return { updated: true as const };
 }

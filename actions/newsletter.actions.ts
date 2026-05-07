@@ -1,6 +1,7 @@
 "use server";
 
 import { backendClient } from "@/sanity/lib/backendClient";
+import { subscribeUser } from "@/lib/mailchimp";
 import { revalidatePath } from "next/cache";
 
 export async function subscribeToNewsletter(email: string) {
@@ -11,7 +12,7 @@ export async function subscribeToNewsletter(email: string) {
       return { success: false, error: "Invalid email address." };
     }
 
-    // Check if the user is already subscribed
+    // Check if the user is already subscribed in Sanity
     const existingSubscriber = await backendClient.fetch(
       `*[_type == "subscriber" && email == $email][0]`,
       { email },
@@ -21,7 +22,15 @@ export async function subscribeToNewsletter(email: string) {
       return { success: false, error: "This email is already subscribed!" };
     }
 
-    // Create a new subscriber document
+    // Subscribe to Mailchimp
+    try {
+      await subscribeUser({ email });
+    } catch (error) {
+      console.error("Failed to subscribe to Mailchimp:", error);
+      // Continue with Sanity subscription even if Mailchimp fails
+    }
+
+    // Create a new subscriber document in Sanity
     await backendClient.create({
       _type: "subscriber",
       email,

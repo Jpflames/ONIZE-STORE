@@ -32,6 +32,7 @@
 - Guest checkout form (name, email, phone, address)
 - Server-initiated **Flutterwave** redirect checkout (`/api/flutterwave/initiate`)
 - Webhook listener automatically confirms orders post-payment (`status: paid`)
+- **Mailchimp integration**: Automatic email sequences for new customers and abandoned carts
 
 ### ❤️ Wishlist
 
@@ -86,6 +87,7 @@
 | Animations       | Framer Motion / Motion                   |
 | CMS & Database   | Sanity v3                                |
 | Payments         | Flutterwave                              |
+| Email Marketing  | Mailchimp                                |
 | State Management | Zustand                                  |
 | UI Primitives    | shadcn/ui + Radix UI                     |
 | Icons            | Lucide React                             |
@@ -116,6 +118,11 @@ SANITY_API_TOKEN=sk...          # needs write access for orders/webhooks
 NEXT_PUBLIC_FLW_PUBLIC_KEY=FLWPUBK_TEST-...
 FLW_SECRET_KEY=FLWSECK_TEST-...
 FLW_SECRET_HASH=your_webhook_hash
+
+# ─── Mailchimp Email Marketing ────────────────────────────────
+MAILCHIMP_API_KEY=your_api_key
+MAILCHIMP_SERVER_PREFIX=us1      # your server prefix
+MAILCHIMP_AUDIENCE_ID=your_audience_id
 
 # ─── App ───────────────────────────────────────────────────────
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
@@ -158,6 +165,19 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 > # Use the generated https URL as your Flutterwave webhook endpoint
 > ```
 
+### Mailchimp (Email Marketing)
+
+1. Go to [mailchimp.com](https://mailchimp.com) and create an account.
+2. Navigate to **Account → Settings → API Keys**:
+   - Create a new API key → `MAILCHIMP_API_KEY`
+   - Note your server prefix (e.g., `us1`, `us2`) → `MAILCHIMP_SERVER_PREFIX`
+3. Navigate to **Audience → Settings → Audience name and defaults**:
+   - Copy the Audience ID from the URL → `MAILCHIMP_AUDIENCE_ID`
+4. **Set up Automations** in Mailchimp:
+   - Create a welcome series triggered by tag `new_customer`
+   - Create an abandoned cart series triggered by tag `abandoned_cart`
+   - The system automatically manages tags: `new_customer`, `abandoned_cart`, `purchased`
+
 ---
 
 ## 📂 Project Structure
@@ -174,7 +194,8 @@ onize/
 │   │   ├── wishlist/      # Saved products
 │   │   └── (user)/        # About, FAQ, Terms, Privacy, Contact
 │   ├── api/
-│   │   └── flutterwave/         # Flutterwave API routes (initiate/verify/webhook)
+│   │   ├── flutterwave/         # Flutterwave API routes (initiate/verify/webhook)
+│   │   └── mailchimp/           # Mailchimp API routes (subscribe/tag/abandoned-carts)
 │   └── studio/            # Embedded Sanity Studio
 ├── components/            # Shared UI components
 │   └── new/               # Feature-specific components
@@ -183,6 +204,8 @@ onize/
 │   └── helpers/           # Data fetching helpers
 ├── store/                 # Zustand stores
 ├── actions/               # Server Actions
+├── lib/
+│   └── mailchimp.ts       # Mailchimp utility functions
 ├── seed.tar.gz            # Sanity seed data
 └── .env                   # Environment variables (you create this)
 ```
