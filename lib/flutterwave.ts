@@ -23,8 +23,17 @@ type FlutterwaveInitResponse = {
 };
 
 function getSecretKey() {
-  const secretKey = process.env.FLW_SECRET_KEY;
-  if (!secretKey) throw new Error("FLW_SECRET_KEY is not configured");
+  const secretKey =
+    process.env.FLW_SECRET_KEY ||
+    process.env.FLUTTERWAVE_SECRET_KEY ||
+    process.env.FLW_SECRETE_KEY;
+
+  if (!secretKey) {
+    throw new Error(
+      "Flutterwave secret key is not configured. Set FLW_SECRET_KEY or FLUTTERWAVE_SECRET_KEY.",
+    );
+  }
+
   return secretKey;
 }
 
