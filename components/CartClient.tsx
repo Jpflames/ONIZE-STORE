@@ -85,7 +85,10 @@ export default function CartClient({
     if (!phone) return toast.error("Phone number is required");
     if (!address) return toast.error("Address is required");
 
-    if (!process.env.NEXT_PUBLIC_FLW_PUBLIC_KEY) {
+    if (
+      !process.env.NEXT_PUBLIC_FLW_PUBLIC_KEY &&
+      !process.env.NEXT_PUBLIC_FLUTTERWAVE_PUBLIC_KEY
+    ) {
       toast.error("Payment gateway is not configured");
       return;
     }
