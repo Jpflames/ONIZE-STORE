@@ -113,8 +113,11 @@ export default function CartClient({
       }
 
       window.location.href = data.paymentLink;
-    } catch {
-      toast.error("Could not start checkout");
+    } catch (error) {
+      console.error("Checkout initiation error:", error);
+      const message =
+        error instanceof Error ? error.message : "Could not start checkout";
+      toast.error(message);
       setLoading(false);
     }
   };
