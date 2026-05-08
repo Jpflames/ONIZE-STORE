@@ -79,9 +79,10 @@ export async function finalizePaidOrder(args: {
     total?: number;
     status?: string;
     tx_ref?: string;
+    email?: string;
   } | null>(
     `*[_type == "order" && id == $orderId][0]{
-      _id,total,status,tx_ref
+      _id,total,status,tx_ref,email
     }`,
     { orderId },
   );

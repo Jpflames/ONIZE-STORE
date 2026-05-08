@@ -57,6 +57,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.4",
     "@tailwindcss/postcss": "^4.2.1",
+    "@types/mailchimp__mailchimp_marketing": "^3.0.22",
     "@types/node": "^25.3.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -64,5 +65,10 @@
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3"
+  },
+  "resolutions": {
+    "formidable": "^3.5.1",
+    "superagent": "^10.2.2",
+    "whatwg-encoding": "^3.1.1"
   }
 }

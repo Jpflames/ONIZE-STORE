@@ -31,7 +31,7 @@ export async function subscribeUser(subscriber: MailchimpSubscriber): Promise<vo
     let existingSubscriber;
     try {
       existingSubscriber = await mailchimp.lists.getListMember(
-        MAILCHIMP_AUDIENCE_ID,
+        MAILCHIMP_AUDIENCE_ID!,
         email.toLowerCase()
       );
     } catch (error: any) {
@@ -43,7 +43,7 @@ export async function subscribeUser(subscriber: MailchimpSubscriber): Promise<vo
 
     const subscriberData = {
       email_address: email.toLowerCase(),
-      status: existingSubscriber ? existingSubscriber.status : "subscribed",
+      status: (existingSubscriber ? existingSubscriber.status : "subscribed") as "subscribed" | "unsubscribed" | "cleaned" | "pending" | "transactional",
       merge_fields: {
         ...(fullName && { FNAME: fullName.split(' ')[0], LNAME: fullName.split(' ').slice(1).join(' ') }),
         ...(phone && { PHONE: phone }),
@@ -53,14 +53,14 @@ export async function subscribeUser(subscriber: MailchimpSubscriber): Promise<vo
     if (existingSubscriber) {
       // Update existing subscriber
       await mailchimp.lists.updateListMember(
-        MAILCHIMP_AUDIENCE_ID,
+        MAILCHIMP_AUDIENCE_ID!,
         email.toLowerCase(),
         subscriberData
       );
     } else {
       // Add new subscriber
       await mailchimp.lists.addListMember(
-        MAILCHIMP_AUDIENCE_ID,
+        MAILCHIMP_AUDIENCE_ID!,
         subscriberData
       );
     }
@@ -76,7 +76,7 @@ export async function subscribeUser(subscriber: MailchimpSubscriber): Promise<vo
 export async function addTag(email: string, tag: string): Promise<void> {
   try {
     await mailchimp.lists.updateListMemberTags(
-      MAILCHIMP_AUDIENCE_ID,
+      MAILCHIMP_AUDIENCE_ID!,
       email.toLowerCase(),
       {
         tags: [{ name: tag, status: "active" }],
@@ -94,7 +94,7 @@ export async function addTag(email: string, tag: string): Promise<void> {
 export async function removeTag(email: string, tag: string): Promise<void> {
   try {
     await mailchimp.lists.updateListMemberTags(
-      MAILCHIMP_AUDIENCE_ID,
+      MAILCHIMP_AUDIENCE_ID!,
       email.toLowerCase(),
       {
         tags: [{ name: tag, status: "inactive" }],
@@ -112,11 +112,15 @@ export async function removeTag(email: string, tag: string): Promise<void> {
 export async function getSubscriberTags(email: string): Promise<string[]> {
   try {
     const member = await mailchimp.lists.getListMember(
-      MAILCHIMP_AUDIENCE_ID,
+      MAILCHIMP_AUDIENCE_ID!,
       email.toLowerCase()
     );
 
-    return member.tags?.map((tag: any) => tag.name) || [];
+    // Type guard to check if it's a successful response
+    if ('tags' in member) {
+      return member.tags?.map((tag: any) => tag.name) || [];
+    }
+    return [];
   } catch (error) {
     console.error(`Mailchimp getSubscriberTags error for ${email}:`, error);
     return [];
