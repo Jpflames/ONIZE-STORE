@@ -1,5 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -57,7 +58,10 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="en">
-      <body className="antialiased font-sans">{children}</body>
+      <body className="antialiased font-sans">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 };
