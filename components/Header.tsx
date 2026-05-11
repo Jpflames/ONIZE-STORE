@@ -5,7 +5,6 @@ import Logo from "./new/Logo";
 import CartIcon from "./new/CartIcon";
 import MobileMenu from "./new/MobileMenu";
 import SearchBar from "./new/SearchBar";
-import TopBanner from "./new/TopBanner";
 import WishlistIcon from "./new/WishlistIcon";
 import CompareIcon from "./new/CompareIcon";
 
@@ -15,7 +14,6 @@ const Header = async () => {
   return (
     <>
       <header className="bg-background sticky top-0 z-50 border-b border-border/50">
-        <TopBanner />
         <Container className="flex items-center justify-between gap-4 text-muted-foreground py-4">
           {/* Left: Navigation Menu */}
           <div className="flex-1 flex items-center justify-start">

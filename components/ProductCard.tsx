@@ -92,16 +92,6 @@ const ProductCard = ({ product }: { product: Product }) => {
           </Link>
         ) : null}
 
-        {/* Discount badge */}
-        {product?.price && product?.discount && (
-          <div className="absolute top-2 right-2 bg-primary text-primary-foreground text-[10px] md:text-xs font-bold px-2 py-1 rounded-md z-10 shadow-sm uppercase">
-            {Math.round(
-              (product.discount / (product.price + product.discount)) * 100,
-            )}
-            % Off
-          </div>
-        )}
-
         {/* Quick-action hover overlay */}
         {isClient && (
           <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-3 p-3 bg-background/90 backdrop-blur-sm border-t border-border translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-20">

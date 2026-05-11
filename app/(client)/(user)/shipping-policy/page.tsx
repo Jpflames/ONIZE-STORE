@@ -43,7 +43,7 @@ const sections = [
     icon: BadgeDollarSign,
     number: "04",
     title: "💰 Shipping Fees",
-    body: "Shipping fees are based on your location and shown at checkout.\n\n• Within Nigeria: $20\n• International Orders: $40\n\nFor custom or bulk orders, shipping costs may vary and will be communicated before payment.",
+    body: "All orders have a flat shipping fee of $40, which will be added at checkout.\n\nFor custom or bulk orders, shipping costs may vary and will be communicated before payment.",
   },
   {
     icon: MapPin,

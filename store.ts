@@ -70,9 +70,7 @@ const useCartStore = create<CartState>()(
       getSubTotalPrice: () => {
         return get().items.reduce((total, item) => {
           const price = item.product.price ?? 0;
-          const discount = ((item.product.discount ?? 0) * price) / 100;
-          const discountedPrice = price + discount;
-          return total + discountedPrice * item.quantity;
+          return total + price * item.quantity;
         }, 0);
       },
       getItemCount: (productId) => {

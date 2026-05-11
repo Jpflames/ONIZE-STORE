@@ -52,7 +52,7 @@ export default function CartClient({
   const details = useGuestCheckoutStore((s) => s.details);
   const setField = useGuestCheckoutStore((s) => s.setField);
   const subtotal = getTotalPrice();
-  const shippingCost = 0;
+  const shippingCost = 40;
   const orderTotal = subtotal + shippingCost;
 
   useEffect(() => {

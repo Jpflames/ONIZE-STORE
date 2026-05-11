@@ -137,7 +137,7 @@ const ProductPage = async ({
                 Shipping
               </p>
               <p className="text-sm text-muted-foreground">
-                $20 within Nigeria · $40 international
+                Flat $40 shipping on all orders
               </p>
             </div>
             <div className="border border-primary/20 text-center p-3 hover:border-primary hoverEffect rounded-md">

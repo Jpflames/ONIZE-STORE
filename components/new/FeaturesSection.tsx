@@ -4,8 +4,8 @@ export default function FeaturesSection() {
   const features = [
     {
       icon: Truck,
-      title: "Free Shipping",
-      description: "On all orders over $300. Delivered to your door.",
+      title: "Fast Shipping",
+      description: "Flat $40 shipping fee on all orders, delivered to your door.",
     },
     {
       icon: ShieldCheck,
