@@ -36,12 +36,6 @@ const StoreCard = ({ store }: Props) => {
         </div>
 
         <div className="space-y-2 mt-2">
-          {store?.location && (
-            <div className="flex items-start gap-2 text-sm text-foreground/80">
-              <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
-              <span>{store.location}</span>
-            </div>
-          )}
           {store?.phoneNumber && (
             <div className="flex items-center gap-2 text-sm text-foreground/80">
               <Phone className="w-4 h-4 shrink-0 text-primary" />

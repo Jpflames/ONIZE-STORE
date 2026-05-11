@@ -47,7 +47,9 @@ export async function POST(req: NextRequest) {
     });
 
     const priceById = new Map(products.map((p) => [p._id, Number(p.price ?? 0)]));
-    const total = items.reduce((sum, i) => sum + (priceById.get(i.productId) ?? 0) * i.quantity, 0);
+    const subtotal = items.reduce((sum, i) => sum + (priceById.get(i.productId) ?? 0) * i.quantity, 0);
+    const shippingCost = 40;
+    const total = subtotal + shippingCost;
 
     if (!Number.isFinite(total) || total <= 0) {
       return NextResponse.json({ error: "Invalid total" }, { status: 400 });

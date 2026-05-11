@@ -8,19 +8,13 @@ interface ContactItemData {
 
 const data: ContactItemData[] = [
   {
-    title: "Visit Us",
-    subtitle: "Minner, Niger state, Nigeria",
-    icon: (
-      <MapPin className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
-    ),
-  },
-  {
     title: "Call Us",
     subtitle: "+2349058775521",
     icon: (
       <Phone className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
     ),
   },
+
   {
     title: "Working Hours",
     subtitle: "Mon - Sat: 10:00 AM - 7:00 PM",
