@@ -1,4 +1,5 @@
 import mailchimp from "@mailchimp/mailchimp_marketing";
+import { createHash } from "crypto";
 
 const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY;
 const MAILCHIMP_SERVER_PREFIX = process.env.MAILCHIMP_SERVER_PREFIX;
@@ -13,10 +14,67 @@ mailchimp.setConfig({
   server: MAILCHIMP_SERVER_PREFIX,
 });
 
+export const MAILCHIMP_TAGS = {
+  newCustomer: "new_customer",
+  purchased: "purchased",
+  abandonedCart: "abandoned_cart",
+} as const;
+
+function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase();
+}
+
+function getSubscriberHash(email: string): string {
+  return createHash("md5").update(normalizeEmail(email)).digest("hex");
+}
+
+function isValidEmail(email: string): boolean {
+  const normalized = normalizeEmail(email);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized);
+}
+
 export interface MailchimpSubscriber {
   email: string;
   fullName?: string;
   phone?: string;
+}
+
+export async function syncSubscriberToMailchimp(
+  subscriber: MailchimpSubscriber,
+  tags: string[] = [MAILCHIMP_TAGS.newCustomer],
+): Promise<void> {
+  try {
+    const email = normalizeEmail(subscriber.email);
+
+    if (!email || !isValidEmail(email)) {
+      throw new Error("Invalid email address");
+    }
+
+    const subscriberHash = getSubscriberHash(email);
+    const merge_fields = {
+      ...(subscriber.fullName ? { FNAME: subscriber.fullName } : {}),
+      ...(subscriber.phone ? { PHONE: subscriber.phone } : {}),
+    };
+
+    const payload: Record<string, unknown> = {
+      email_address: email,
+      status_if_new: "subscribed",
+      merge_fields,
+    };
+
+    if (tags.length > 0) {
+      payload.tags = tags;
+    }
+
+    await mailchimp.lists.setListMember(
+      MAILCHIMP_AUDIENCE_ID!,
+      subscriberHash,
+      payload,
+    );
+  } catch (error) {
+    console.error("Mailchimp syncSubscriberToMailchimp error:", error);
+    throw new Error("Failed to sync subscriber to Mailchimp");
+  }
 }
 
 /**
@@ -24,50 +82,7 @@ export interface MailchimpSubscriber {
  * Updates existing subscriber if already exists
  */
 export async function subscribeUser(subscriber: MailchimpSubscriber): Promise<void> {
-  try {
-    const { email, fullName, phone } = subscriber;
-
-    // Check if subscriber already exists
-    let existingSubscriber;
-    try {
-      existingSubscriber = await mailchimp.lists.getListMember(
-        MAILCHIMP_AUDIENCE_ID!,
-        email.toLowerCase()
-      );
-    } catch (error: any) {
-      // If error is not "member not found", rethrow
-      if (error.status !== 404) {
-        throw error;
-      }
-    }
-
-    const subscriberData = {
-      email_address: email.toLowerCase(),
-      status: (existingSubscriber ? existingSubscriber.status : "subscribed") as "subscribed" | "unsubscribed" | "cleaned" | "pending" | "transactional",
-      merge_fields: {
-        ...(fullName && { FNAME: fullName.split(' ')[0], LNAME: fullName.split(' ').slice(1).join(' ') }),
-        ...(phone && { PHONE: phone }),
-      },
-    };
-
-    if (existingSubscriber) {
-      // Update existing subscriber
-      await mailchimp.lists.updateListMember(
-        MAILCHIMP_AUDIENCE_ID!,
-        email.toLowerCase(),
-        subscriberData
-      );
-    } else {
-      // Add new subscriber
-      await mailchimp.lists.addListMember(
-        MAILCHIMP_AUDIENCE_ID!,
-        subscriberData
-      );
-    }
-  } catch (error) {
-    console.error("Mailchimp subscribeUser error:", error);
-    throw new Error("Failed to subscribe user to Mailchimp");
-  }
+  return syncSubscriberToMailchimp(subscriber, []);
 }
 
 /**
@@ -77,7 +92,7 @@ export async function addTag(email: string, tag: string): Promise<void> {
   try {
     await mailchimp.lists.updateListMemberTags(
       MAILCHIMP_AUDIENCE_ID!,
-      email.toLowerCase(),
+      normalizeEmail(email),
       {
         tags: [{ name: tag, status: "active" }],
       }
@@ -95,7 +110,7 @@ export async function removeTag(email: string, tag: string): Promise<void> {
   try {
     await mailchimp.lists.updateListMemberTags(
       MAILCHIMP_AUDIENCE_ID!,
-      email.toLowerCase(),
+      normalizeEmail(email),
       {
         tags: [{ name: tag, status: "inactive" }],
       }
@@ -113,7 +128,7 @@ export async function getSubscriberTags(email: string): Promise<string[]> {
   try {
     const member = await mailchimp.lists.getListMember(
       MAILCHIMP_AUDIENCE_ID!,
-      email.toLowerCase()
+      normalizeEmail(email)
     );
 
     // Type guard to check if it's a successful response
