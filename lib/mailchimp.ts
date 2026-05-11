@@ -56,20 +56,17 @@ export async function syncSubscriberToMailchimp(
       ...(subscriber.phone ? { PHONE: subscriber.phone } : {}),
     };
 
-    const payload: Record<string, unknown> = {
+    const payload = {
       email_address: email,
-      status_if_new: "subscribed",
+      status_if_new: "subscribed" as const,
       merge_fields,
+      ...(tags.length > 0 && { tags }),
     };
-
-    if (tags.length > 0) {
-      payload.tags = tags;
-    }
 
     await mailchimp.lists.setListMember(
       MAILCHIMP_AUDIENCE_ID!,
       subscriberHash,
-      payload,
+      payload as any,
     );
   } catch (error) {
     console.error("Mailchimp syncSubscriberToMailchimp error:", error);
