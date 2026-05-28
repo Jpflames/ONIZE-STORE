@@ -39,6 +39,24 @@ async function getState() {
   return { products, sales, orders };
 }
 
+async function inspectProductLikeDocuments() {
+  return client.fetch(
+    `*[
+      _type == "product" ||
+      _id match "drafts.*" && _type == "product" ||
+      _id match "versions.**" && _type == "product" ||
+      _id match "*.product*" ||
+      _type match "*product*"
+    ]{
+      _id,
+      _type,
+      name,
+      _createdAt,
+      _updatedAt
+    } | order(_updatedAt desc)`,
+  );
+}
+
 async function getReferencingDocuments(productIds) {
   if (!productIds.length) return [];
 
@@ -109,6 +127,12 @@ async function main() {
       2,
     ),
   );
+
+  if (mode === "inspect") {
+    const documents = await inspectProductLikeDocuments();
+    console.log(JSON.stringify(documents, null, 2));
+    return;
+  }
 
   if (mode !== "delete") return;
 
