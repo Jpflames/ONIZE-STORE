@@ -57,6 +57,7 @@ export const orderType = defineType({
               title: "Product",
               type: "reference",
               to: [{ type: "product" }],
+              weak: true,
             }),
             defineField({
               name: "quantity",

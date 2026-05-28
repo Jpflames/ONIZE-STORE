@@ -32,6 +32,7 @@ export async function createPendingOrder(payload: PendingOrderPayload) {
     product: {
       _type: "reference",
       _ref: item.product._id,
+      _weak: true,
     },
     quantity: item.quantity,
   }));

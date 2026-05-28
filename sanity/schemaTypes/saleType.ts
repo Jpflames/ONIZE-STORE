@@ -48,7 +48,7 @@ export const saleType = defineType({
       name: "products",
       title: "Product References",
       type: "array",
-      of: [{ type: "reference", to: { type: "product" } }],
+      of: [{ type: "reference", to: { type: "product" }, weak: true }],
     }),
     defineField({
       name: "details",
